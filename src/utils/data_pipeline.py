@@ -3,7 +3,7 @@ import numpy as np
 import re
 from src.utils.feature_engineering import compute_feature
 
-def clean_text(text)
+def clean_text(text):
     #Basic cleaning of data: remove extra spaces and very short string
 
 
@@ -32,6 +32,7 @@ def create_feature_pipeline(df, num_layers_list, training_hours_list, flops_per_
         )
         rows.append(features)
     return pd.DataFrame(rows)
+
 if __name__ == "__main__":
     #load and clean raw prompts
     df = load_clean_raw()
