@@ -3,16 +3,33 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from src.nlp.complexity_score import ComplexityAnalyzer
+import os
+import sys
+
+# --- PATH SETUP ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, '../..'))
+if project_root not in sys.path:
+    sys.path.append(project_root)
 
 class EnergyEstimator:
     def __init__(self):
         # --- MOCK DATA & TRAINING ---
-        self.data = pd.DataFrame({
-            'num_layers': [2, 4, 6, 8, 10, 12, 100],
-            'training_hours': [1, 2, 3, 4, 5, 24, 48],
-            'flops_per_hour': [10, 20, 40, 60, 90, 100, 200], 
-            'energy_kwh': [0.5, 1.3, 2.8, 4.5, 6.9, 35.5, 80.2]
-        })
+        # self.data = pd.DataFrame({
+        #     'num_layers': [2, 4, 6, 8, 10, 12, 100],
+        #     'training_hours': [1, 2, 3, 4, 5, 24, 48],
+        #     'flops_per_hour': [10, 20, 40, 60, 90, 100, 200], 
+        #     'energy_kwh': [0.5, 1.3, 2.8, 4.5, 6.9, 35.5, 80.2]
+        # })
+        
+        # 2. Join it with the filename to get the absolute path
+        features_file_path = os.path.join(project_root, "data", "processed", 'features_df.csv')
+        energy_file_path = os.path.join(project_root, "data", "synthetic", 'energy_dataset.csv')
+        
+        print(f"Reading file from: {energy_file_path}") # Debug print
+        
+        # 3. Read the file
+        self.data = pd.read_csv(energy_file_path)
 
         self.X = self.data[['num_layers', 'training_hours', 'flops_per_hour']]
         self.y = self.data['energy_kwh']
@@ -56,7 +73,6 @@ class EnergyEstimator:
     def get_training_plot(self):
         """
         Generates the matplotlib figure for Actual vs Predicted Energy.
-        This matches the mockup code requirement.
         """
         # Get predictions for the training data to show fit
         predictions = self.model.predict(self.X)
@@ -68,7 +84,7 @@ class EnergyEstimator:
         
         ax.set_xlabel('Number of Layers')
         ax.set_ylabel('Energy Consumption (kWh)')
-        ax.set_title('Energy Prediction Model Accuracy (Mock Data)')
+        ax.set_title('Energy Prediction Model Accuracy (Synthetic Data)')
         ax.legend()
         ax.grid(True, linestyle='--', alpha=0.7)
         

@@ -27,16 +27,16 @@ if 'improved_results' not in st.session_state:
 
 # --- SIDEBAR (INPUTS) ---
 with st.sidebar:
-    st.header("1. Model Architecture")
+    st.header("Model Architecture")
     layers = st.number_input("Number of Layers", min_value=1, max_value=200, value=12)
     training_time = st.number_input("Training Time (Hours)", min_value=0.1, value=5.0)
     flops_input = st.text_input("FLOPs (e.g. 1.5e18)", value="1.5e18")
     
     st.markdown("---")
-    st.info("ℹ️ Uses Linear Regression on mock training data.")
+    st.info("ℹ️ Uses Linear Regression on synthetic training data.")
 
 # --- MAIN AREA ---
-st.subheader("2. Enter Prompt Context")
+st.subheader("Enter Prompt Context")
 prompt_text = st.text_area("Input Prompt:", height=100, placeholder="Enter your prompt here...")
 
 # --- LOGIC FLOW ---
