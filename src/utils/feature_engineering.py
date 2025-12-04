@@ -2,7 +2,7 @@
 
 from transformers import AutoTokenizer
 import nltk
-from nltk.corpus import stopwrods
+from nltk.corpus import stopwords
 
 #Downlaod stopwrods if not done already
 
@@ -41,10 +41,10 @@ def compute_feature(prompt, num_layers, training_hours, flops_per_hour):
 
     return {
         "prompt": prompt,
-        "token_counter": token_counter,
+        "token_count": token_counter,
         "char_count": chars,
         "punct_ratio": punct_ratio,
-        "avg_word_len": avg_word_len,
+        "avg_word_length": avg_word_len,
         "stopword_ratio": stopword_ratio,
         "num_layers": num_layers,
         "training_hours": training_hours,

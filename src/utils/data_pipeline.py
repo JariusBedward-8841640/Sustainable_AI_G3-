@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
-from src.utils.feature_engineering import compute_feature
+from feature_engineering import compute_feature
 
 def clean_text(text):
     #Basic cleaning of data: remove extra spaces and very short string
