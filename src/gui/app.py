@@ -67,14 +67,15 @@ if st.session_state['step'] >= 1:
     
     st.info(f"**System Suggestion:** {res['suggestion']}")
 
-    # --- SHOW GRAPH HERE ---
-    with st.expander("📈 View Model Performance Graph", expanded=True):
-        estimator = EnergyEstimator() # Re-init to get plot
-        fig = estimator.get_training_plot()
-        st.pyplot(fig)
-    
-    # Show "Improve" button only if we haven't improved yet
+    # --- SHOW GRAPH (STEP 1) ---
+    # We only show this here if we remain in step 1. 
+    # If we are in step 2, we will render it at the bottom to keep the flow clean.
     if st.session_state['step'] == 1:
+        with st.expander("📈 View Model Performance Graph", expanded=True):
+            estimator = EnergyEstimator()
+            fig = estimator.get_training_plot()
+            st.pyplot(fig)
+    
         st.markdown("---")
         st.write("👉 **Can we do better?** Click below to optimize the prompt and architecture.")
         
@@ -122,6 +123,14 @@ if st.session_state['step'] == 2:
         st.code(st.session_state['better_prompt'], language="text")
         
     st.balloons()
+
+    # --- SHOW GRAPH AGAIN (STEP 2) ---
+    st.markdown("---")
+    st.subheader("Model Context")
+    with st.expander("📈 View Model Performance Graph", expanded=True):
+        estimator = EnergyEstimator()
+        fig = estimator.get_training_plot()
+        st.pyplot(fig)
     
     if st.button("🔄 Reset"):
         st.session_state['step'] = 0
