@@ -4,7 +4,7 @@
     1. Jarius Bedward #8841640
     2. Mostafa Allahmoradi
     3. Oluwafemi Lawal
-    4. Jatinder Pal Singh
+    4. Jatinder Pal Singh: 9083762
 
 ## Project Summary:
 
