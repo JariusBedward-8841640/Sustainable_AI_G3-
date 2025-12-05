@@ -1,8 +1,10 @@
 from datasets import load_dataset
 import pandas as pd
+import os
 
 # Load raw text dataset from hugging face andf save it as csv
 def load_dataset_raw():
+    os.makedirs("data/raw", exist_ok=True)
     #Load yelp review (full train split)
     dataset = load_dataset('yelp_review_full', split="train")
 
