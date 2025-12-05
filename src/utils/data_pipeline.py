@@ -2,15 +2,35 @@ import pandas as pd
 import numpy as np
 import re
 from feature_engineering import compute_feature
+import nltk
+
+from nltk.corpus import stopwords
+
+nltk.download("stopwords", quiet=True)
+stop_words = set(stopwords.words("english"))
 
 def clean_text(text):
-    #Basic cleaning of data: remove extra spaces and very short string
-
-
     if not isinstance(text, str):
         text = str(text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text if len(text) > 5 else None
+
+        # lowercase
+    text = text.lower()
+
+    # remove punctuation and numbers
+    text = re.sub(r"[^a-z\s]", " ", text)
+
+    # normalize whitespace
+    text = re.sub(r"\s+", " ", text).strip()
+
+    # remove stopwords
+    words = [w for w in text.split() if w not in stop_words]
+
+    # reassemble
+    cleaned = " ".join(words)
+
+    # filter very short texts
+    return cleaned if len(cleaned) > 5 else None
+
 
 def load_clean_raw(csv_path="data/raw/raw_prompts.csv"):
     #load csv and clean prompts

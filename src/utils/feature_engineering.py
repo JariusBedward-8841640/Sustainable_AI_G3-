@@ -21,8 +21,8 @@ def compute_feature(prompt, num_layers, training_hours, flops_per_hour):
     word = prompt.split()
     chars = len(prompt)
 
-    #token count using tokenizer
-    token_counter = len(tokenizer.encode(prompt))
+    #token count using tokenizer #truncate to avoid maximum sequence index error so that all 650,000 rows are processed
+    token_counter = len(tokenizer.encode(prompt, truncation=True, max_length=512))
 
     #ratio of punctiuatioin characters
     punct_ratio = sum(1 for c in prompt if c in ".,!?;:") /max(chars,1)

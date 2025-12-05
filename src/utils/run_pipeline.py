@@ -20,7 +20,7 @@ def main():
     os.makedirs("data/processed", exist_ok=True)
     os.makedirs("data/synthetic", exist_ok=True)
 
-    # Load raw data
+    #Load raw data
     print("Loading raw data...")
     df_raw = load_dataset_raw()
     print(f"Raw data loaded: {len(df_raw)} rows")

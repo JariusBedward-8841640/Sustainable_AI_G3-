@@ -8,10 +8,10 @@ def generate_energy_data(df):
 
     df = df.copy()
     df["energy_kwh"] = (
-        0.5
-        + df["token_count"] * 0.003
-        + df["avg_word_length"] * 0.10
-        + np.random.normal(0,0.05, size=len(df)) #small noise
+        0.5 #baseline energy cost
+        + df["token_count"] * 0.003 #increass energy proportionally with number of tokens in prompt
+        + df["avg_word_length"] * 0.10 # slightly increases energy prompt with longer words
+        + np.random.normal(0,0.05, size=len(df)) #small noise to set to make dataset more realistic and avoid perfect linearity
     )
     df.to_csv("data/synthetic/energy_dataset.csv", index=False)
     return df
