@@ -1,10 +1,10 @@
 # Sustainable AI - Transparency and Energy-Efficient Prompt/Context Engineering with Machine Learning (CSCN8010)
 
 ##  Project Members:
-    1. Jarius Bedward #8841640
-    2. Mostafa Allahmoradi
+    1. Jarius Bedward - 8841640
+    2. Mostafa Allahmoradi - 9087818
     3. Oluwafemi Lawal
-    4. Jatinder Pal Singh: 9083762
+    4. Jatinder Pal Singh: - 9083762
 
 ## Project Summary:
 
