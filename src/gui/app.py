@@ -24,6 +24,16 @@ if 'original_results' not in st.session_state:
     st.session_state['original_results'] = {}
 if 'improved_results' not in st.session_state:
     st.session_state['improved_results'] = {}
+# Store pending toast messages for display after reruns
+if 'toast_message' not in st.session_state:
+    st.session_state['toast_message'] = None
+
+# --- TOAST MANAGER ---
+# If a message was set in a previous run (before a rerun), show it now
+if st.session_state['toast_message']:
+    msg, icon = st.session_state['toast_message']
+    st.toast(msg, icon=icon)
+    st.session_state['toast_message'] = None
 
 # --- SIDEBAR (INPUTS) ---
 with st.sidebar:
@@ -31,9 +41,12 @@ with st.sidebar:
     layers = st.number_input("Number of Layers", min_value=1, max_value=200, value=12)
     training_time = st.number_input("Training Time (Hours)", min_value=0.1, value=5.0)
     flops_input = st.text_input("FLOPs (e.g. 1.5e18)", value="1.5e18")
+
+    # Add dropdown for model type
+    model_type = st.selectbox("Select Model Type", options=["RandomForest", "LinearRegression"], index=1)
     
     st.markdown("---")
-    st.info("ℹ️ Uses Linear Regression on synthetic training data.")
+    st.info(f"ℹ️ Uses {model_type} on synthetic training data.")
 
 # --- MAIN AREA ---
 st.subheader("Enter Prompt Context")
@@ -46,14 +59,16 @@ if st.button("🚀 Analyze Consumption", type="primary"):
     if not prompt_text:
         st.error("Please enter a prompt.")
     else:
-        estimator = EnergyEstimator()
+        estimator = EnergyEstimator(model_type=model_type)
         results = estimator.estimate(prompt_text, layers, training_time, flops_input)
         
         st.session_state['original_results'] = results
         st.session_state['prompt'] = prompt_text
-        st.session_state['step'] = 1 
+        st.session_state['step'] = 1
+        # TOAST 1: Initial Analysis 
+        st.toast('Initial Analysis Complete!', icon='⚡')
 
-# --- VIEW 1: INITIAL RESULT ---
+# --- VIEW: SHARED RESULTS (Visible in Step 1 AND Step 2) ---
 if st.session_state['step'] >= 1:
     st.divider()
     st.subheader("📊 Analysis Report")
@@ -65,39 +80,46 @@ if st.session_state['step'] >= 1:
     col2.metric("Carbon Footprint", f"{res['carbon_kg']} kgCO2")
     col3.metric("Token Count", res['token_count'])
     
-    st.info(f"**System Suggestion:** {res['suggestion']}")
+    # Suggestion for original result
+    # st.info(f"**System Suggestion:** {res['suggestion']}")
+    st.info("**Message: ✅ Initial analysis complete.**" )
 
-    # --- SHOW GRAPH (STEP 1) ---
-    # We only show this here if we remain in step 1. 
-    # If we are in step 2, we will render it at the bottom to keep the flow clean.
-    if st.session_state['step'] == 1:
-        with st.expander("📈 View Model Performance Graph", expanded=True):
-            estimator = EnergyEstimator()
-            fig = estimator.get_training_plot()
-            st.pyplot(fig)
+    # --- SHOW GRAPH 1 (ALWAYS VISIBLE) ---
+    st.markdown("#### Initial Model Performance")
+    with st.expander("📈 View Initial Performance Graph", expanded=True):
+        estimator = EnergyEstimator(model_type=model_type)
+        fig = estimator.get_training_plot()
+        st.pyplot(fig)
     
-        st.markdown("---")
-        st.write("👉 **Can we do better?** Click below to optimize the prompt and architecture.")
-        
-        if st.button("✨ Improve & Optimize Prompt"):
-            # 1. Simplify Prompt
-            simplifier = PromptSimplifier()
-            better_prompt = simplifier.optimize(st.session_state['prompt'])
-            
-            # 2. Estimate with "Improved" inputs
-            improved_layers = int(layers * 0.8) if layers > 1 else 1
-            improved_time = training_time * 0.8
-            
-            new_results = estimator.estimate(better_prompt, improved_layers, improved_time, flops_input)
-            
-            st.session_state['improved_results'] = new_results
-            st.session_state['better_prompt'] = better_prompt
-            st.session_state['step'] = 2 
-            st.rerun()
+    st.markdown("---")
 
-# --- VIEW 2: COMPARISON RESULT ---
+# --- VIEW 1: BUTTON ONLY ---
+if st.session_state['step'] == 1:
+    st.write("👉 **Can we do better?** Click below to optimize the prompt and architecture.")
+    
+    if st.button("✨ Improve & Optimize Prompt"):
+        # 1. Simplify Prompt
+        simplifier = PromptSimplifier()
+        better_prompt = simplifier.optimize(st.session_state['prompt'])
+        
+        # 2. Estimate with "Improved" inputs
+        improved_layers = int(layers * 0.8) if layers > 1 else 1
+        improved_time = training_time * 0.8
+        
+        estimator = EnergyEstimator(model_type=model_type)
+        new_results = estimator.estimate(better_prompt, improved_layers, improved_time, flops_input)
+        
+        st.session_state['improved_results'] = new_results
+        st.session_state['better_prompt'] = better_prompt
+        st.session_state['step'] = 2 
+        # TOAST 2: Set message and rerun
+        st.session_state['toast_message'] = ('Optimization Complete! Energy reduced.', '🌱')
+        st.rerun()
+
+# --- VIEW 2: COMPARISON RESULT & GRAPH 2 ---
 if st.session_state['step'] == 2:
-    st.divider()
+    st.info("**System Suggestion:** ✅ Optimized.")
+    
     st.subheader("✅ Optimization Results")
     
     orig = st.session_state['original_results']
@@ -122,16 +144,16 @@ if st.session_state['step'] == 2:
         st.success("**Optimized Prompt**")
         st.code(st.session_state['better_prompt'], language="text")
         
-    st.balloons()
-
-    # --- SHOW GRAPH AGAIN (STEP 2) ---
-    st.markdown("---")
-    st.subheader("Model Context")
-    with st.expander("📈 View Model Performance Graph", expanded=True):
-        estimator = EnergyEstimator()
+    # --- SHOW GRAPH 2 (NEW GRAPH) ---
+    st.markdown("#### Optimized Model Performance")
+    
+    with st.expander("📉 View Optimized Performance Graph", expanded=True):
+        estimator = EnergyEstimator(model_type=model_type)
         fig = estimator.get_training_plot()
         st.pyplot(fig)
     
     if st.button("🔄 Reset"):
         st.session_state['step'] = 0
+        # TOAST 3: Set message and rerun
+        st.session_state['toast_message'] = ('System Reset.', '🔄')
         st.rerun()

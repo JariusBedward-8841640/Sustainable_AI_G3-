@@ -1,8 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-import sklearn.preprocessing as pp
 from src.nlp.complexity_score import ComplexityAnalyzer
 import os
 import sys
@@ -13,10 +9,10 @@ project_root = os.path.abspath(os.path.join(current_dir, '../..'))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from model.model_trainer import ModelTrainer
+from model.Energy_Predictor import EnergyModelTrainer
 
 class EnergyEstimator:
-    def __init__(self):
+    def __init__(self, model_type: str = "RandomForest"):
         # --- MOCK DATA & TRAINING ---
         # self.data = pd.DataFrame({
         #     'num_layers': [2, 4, 6, 8, 10, 12, 100],
@@ -25,7 +21,7 @@ class EnergyEstimator:
         #     'energy_kwh': [0.5, 1.3, 2.8, 4.5, 6.9, 35.5, 80.2]
         # })
 
-        self.trainer = ModelTrainer()
+        self.model_type = model_type
         
         # Join it with the filepath and the filename to get the absolute path
         features_file_path = os.path.join(project_root, "data", "processed", 'features_df.csv')
@@ -40,7 +36,8 @@ class EnergyEstimator:
         FEATURES = ['num_layers', 'training_hours', 'flops_per_hour']
         TARGET = 'energy_kwh'
 
-        # Train
+        # Instantiate and Train
+        self.trainer = EnergyModelTrainer(model_type=self.model_type)
         self.trainer.train(self.data, FEATURES, TARGET)
 
     def estimate(self, prompt_text, layers, training_hours, flops_str):
@@ -60,7 +57,7 @@ class EnergyEstimator:
             'flops_per_hour': [flops_score]
         })
 
-        predicted_energy = self.trainer.predict(input_data)[0]
+        predicted_energy = self.trainer.predict_energy(input_data.iloc[0].to_dict())
         predicted_energy = max(0.1, predicted_energy)
 
         suggestion = "✅ Optimized."
@@ -81,6 +78,6 @@ class EnergyEstimator:
         Generates the matplotlib figure for Actual vs Predicted Energy.
         """
 
-        fig = self.trainer.visualize_results()
+        fig = self.trainer.visualize_performance()
         
         return fig
