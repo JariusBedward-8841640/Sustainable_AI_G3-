@@ -9,8 +9,9 @@ import os
 import numpy as np
 import pandas as pd
 from data_loader import load_dataset_raw
-from data_pipeline import compute_feature
+from data_pipeline import compute_feature, clean_text
 from energy_simulator import generate_energy_data
+
 
 
 def main():
@@ -28,6 +29,10 @@ def main():
     #Clean and feature engineer
     print("Cleaning and computing features...")
 
+    #Apply cleaning
+    df_raw["prompt_clean"] = df_raw["prompt"].apply(clean_text)
+    df_raw = df_raw.dropna(subset=["prompt_clean"]).reset_index(drop=True)
+
     #Generatea synthetic numeric parameters
     n = len(df_raw)
     num_layers_list = np.random.randint(4, 48, size=n)
@@ -38,7 +43,7 @@ def main():
     features_rows = []
     for i, row in df_raw.iterrows():
         features = compute_feature(
-            row["prompt"],
+            row["prompt_clean"],
             num_layers_list[i],
             training_hours_list[i],
             flops_per_hour_list[i]

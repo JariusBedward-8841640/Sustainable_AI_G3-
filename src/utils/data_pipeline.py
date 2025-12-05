@@ -3,7 +3,6 @@ import numpy as np
 import re
 from feature_engineering import compute_feature
 import nltk
-
 from nltk.corpus import stopwords
 
 nltk.download("stopwords", quiet=True)
@@ -13,30 +12,30 @@ def clean_text(text):
     if not isinstance(text, str):
         text = str(text)
 
-        # lowercase
+    #lowercase
     text = text.lower()
 
-    # remove punctuation and numbers
+    #remove punctuation and numbers
     text = re.sub(r"[^a-z\s]", " ", text)
 
-    # normalize whitespace
+    #normalize whitespace
     text = re.sub(r"\s+", " ", text).strip()
 
-    # remove stopwords
+    #remove stopwords
     words = [w for w in text.split() if w not in stop_words]
 
-    # reassemble
+
     cleaned = " ".join(words)
 
-    # filter very short texts
+    #filter very short texts
     return cleaned if len(cleaned) > 5 else None
 
 
 def load_clean_raw(csv_path="data/raw/raw_prompts.csv"):
     #load csv and clean prompts
     df = pd.read_csv(csv_path)
-    df["prompt"] = df["prompt"].apply(clean_text)
-    df = df.dropna(subset=["prompt"]).reset_index(drop=True)
+    df["prompt_clean"] = df["prompt"].apply(clean_text)
+    df = df.dropna(subset=["prompt_clean"]).reset_index(drop=True)
     return df
 
 def create_feature_pipeline(df, num_layers_list, training_hours_list, flops_per_hour_list):
@@ -45,7 +44,7 @@ def create_feature_pipeline(df, num_layers_list, training_hours_list, flops_per_
     rows = []
     for i, row in df.iterrows():
         features = compute_feature(
-            row["prompt"],
+            row["prompt_clean"],
             num_layers_list[i],
             training_hours_list[i],
             flops_per_hour_list[i],
@@ -55,7 +54,8 @@ def create_feature_pipeline(df, num_layers_list, training_hours_list, flops_per_
 
 if __name__ == "__main__":
     #load and clean raw prompts
-    df = load_clean_raw()
+    df = load_clean_raw("data/raw/raw_prompts.csv")
+    print(df["prompt_clean"].head(5))
 
     #Generate random model aprams for synthetic features
     n = len(df)

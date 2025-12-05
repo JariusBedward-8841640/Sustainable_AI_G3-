@@ -16,8 +16,6 @@ tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 def compute_feature(prompt, num_layers, training_hours, flops_per_hour):
     #Compute features for a given prompt and model params
 
-
-
     word = prompt.split()
     chars = len(prompt)
 
