@@ -66,8 +66,7 @@ This project addresses the critical environmental impact of the rapid expansion 
 
 6. **Output & Logging**
    - The estimated energy and the optimized prompt are displayed to the user.
-   - Data is logged to the backend (SQLite/PostgreSQL) for future benchmarking and transparency reports.
-
+   - Data is
 
 ### Final Conclusion: 
     - This project demonstrates a proof-of-concept for "Sustainable AI" by linking NLP inputs directly to physical energy estimates. 
