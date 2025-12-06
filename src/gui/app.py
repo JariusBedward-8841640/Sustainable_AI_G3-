@@ -88,7 +88,7 @@ if st.session_state['step'] >= 1:
     st.markdown("#### Initial Model Performance")
     with st.expander("📈 View Initial Performance Graph", expanded=True):
         estimator = EnergyEstimator(model_type=model_type)
-        fig = estimator.get_training_plot()
+        fig = estimator.get_training_plot(layers)
         st.pyplot(fig)
     
     st.markdown("---")

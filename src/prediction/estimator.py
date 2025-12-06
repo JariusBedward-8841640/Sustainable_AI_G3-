@@ -232,70 +232,56 @@ class EnergyEstimator:
         self.is_trained = True
         print(f"Model loaded from {filename}")    
 
-    def get_training_plot(self):
+    def get_training_plot(self, num_layers):
         """
-        Generates plots. 
-        If model was loaded from disk, you MUST provide 'df_new' and 'target_col' to see plots.
+        Generates a single line plot comparing Actual vs Predicted Energy.
         """
         target_col='energy_kwh'
-        df = self.data
+        
         if not self.is_trained:
             raise ValueError("Model not trained.")
 
-        # --- Scenario A: Model just loaded (No test data in memory) ---
+        # --- 1. Data Retrieval Logic ---
         if not hasattr(self, 'y_test_real'):
-            if df is not None and target_col is not None:
-                print("Generating plots using provided new data...")
-                # Generate predictions on the new data provided
-                (X_new, y_new), _ = self.preprocess_and_split(df, self.feature_names, target_col)
+            # Scenario: Model Loaded from Disk
+            if self.data is not None and target_col is not None:
+                (X_new, y_new), _ = self.preprocess_and_split(self.data, self.feature_names, target_col)
                 preds_scaled = self.model.predict(X_new)
                 
-                # Inverse transform to get real units (kWh)
                 y_real = self.scaler_y.inverse_transform(y_new).flatten()
                 preds_real = self.scaler_y.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
-                
-                # Calculate metrics for title
-                r2 = r2_score(y_real, preds_real)
             else:
-                print("⚠️ Cannot visualize: Model was loaded from disk and no new data was provided.")
-                print("Fix: Call visualize_performance(df=my_dataframe, target_col='Energy')")
-                return
-
-        # --- Scenario B: Model just trained (Test data exists in memory) ---
+                print("⚠️ Cannot visualize: Model loaded from disk. Please provide df_new and target_col.")
+                return None
         else:
+            # Scenario: Just Trained (Memory available)
             y_real = self.y_test_real
             preds_real = self.preds_real
-            r2 = self.metrics['r2']
 
-        # --- Plotting Logic (Same as before) ---
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+        # --- 2. Slicing Logic (The "Number of Layers" Filter) ---
+        if num_layers is not None:
+            # Ensure we don't try to plot more points than we actually have
+            limit = min(num_layers, len(y_real))
+            y_real = y_real[:limit]
+            preds_real = preds_real[:limit]
 
-        # Plot 1: Actual vs Predicted
-        ax1.scatter(y_real, preds_real, alpha=0.6, color='#2c3e50')
-        min_val, max_val = min(y_real), max(y_real)
-        ax1.plot([min_val, max_val], [min_val, max_val], 'r--', lw=2, label='Perfect Fit')
-        ax1.set_xlabel('Actual Energy (kWh)')
-        ax1.set_ylabel('Predicted Energy (kWh)')
-        ax1.set_title(f'Accuracy: {self.model_type} (R2: {r2:.2f})')
-        ax1.legend()
-        ax1.grid(True, alpha=0.3)
+        # --- 3. Plotting Logic ---
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-        # Plot 2: Feature Importance
-        if self.model_type == "RandomForest":
-            importances = self.model.feature_importances_
-            indices = np.argsort(importances)
-            ax2.barh(range(len(indices)), importances[indices], color='#27ae60')
-            ax2.set_yticks(range(len(indices)))
-            ax2.set_yticklabels([self.feature_names[i] for i in indices])
-            ax2.set_title('Feature Importance')
-            
-        elif self.model_type == "LinearRegression":
-            coefs = self.model.coef_
-            indices = np.argsort(coefs)
-            ax2.barh(range(len(indices)), coefs[indices], color='#2980b9')
-            ax2.set_yticks(range(len(indices)))
-            ax2.set_yticklabels([self.feature_names[i] for i in indices])
-            ax2.set_title('Feature Coefficients')
+        # X-axis: 1 up to N
+        x_axis_values = range(1, len(y_real) + 1)
 
-        plt.tight_layout()
+        # Plot Actual Data
+        ax.plot(x_axis_values, y_real, label='Actual', color='blue', linewidth=2)
+        
+        # Plot Predicted Data
+        ax.plot(x_axis_values, preds_real, label='Predicted', color='orange', linestyle='--', linewidth=2)
+
+        ax.set_xlabel('Number of Layers')
+        ax.set_ylabel('Energy consumption (kWh)')
+        ax.set_title(f'Actual vs Predicted Energy ({self.model_type})')
+        
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+
         return fig
