@@ -149,7 +149,7 @@ if st.session_state['step'] == 2:
     
     with st.expander("📉 View Optimized Performance Graph", expanded=True):
         estimator = EnergyEstimator(model_type=model_type)
-        fig = estimator.get_training_plot()
+        fig = estimator.get_training_plot(layers)
         st.pyplot(fig)
     
     if st.button("🔄 Reset"):
