@@ -1,0 +1,386 @@
+{
+  "version": "1.0.0",
+  "description": "Extended training data with augmented examples for T5 prompt optimizer.",
+  "data": [
+    {
+      "original": "I was wondering if you might be able to help me with sorting an array in Python.",
+      "optimized": "Sort Python array."
+    },
+    {
+      "original": "Please help me to understand how to use async await in JavaScript.",
+      "optimized": "Explain async/await in JavaScript."
+    },
+    {
+      "original": "Could you possibly show me how to connect to a MySQL database using Python?",
+      "optimized": "Connect Python to MySQL."
+    },
+    {
+      "original": "I would really appreciate if you could explain what is React hooks and how to use them.",
+      "optimized": "Explain React hooks usage."
+    },
+    {
+      "original": "Would you be so kind as to help me write a function that reverses a string?",
+      "optimized": "Write string reverse function."
+    },
+    {
+      "original": "I am looking for assistance in understanding how CSS flexbox works.",
+      "optimized": "Explain CSS flexbox."
+    },
+    {
+      "original": "Can you please provide me with an example of how to use the map function in Python?",
+      "optimized": "Python map function example."
+    },
+    {
+      "original": "I need your help with understanding what is the difference between let and const in JavaScript.",
+      "optimized": "Compare let vs const JavaScript."
+    },
+    {
+      "original": "Would it be possible for you to explain how to handle exceptions in Java?",
+      "optimized": "Java exception handling."
+    },
+    {
+      "original": "I was hoping you could assist me in creating a simple REST API using Flask.",
+      "optimized": "Create Flask REST API."
+    },
+    {
+      "original": "Please help me understand the concept of closures in JavaScript.",
+      "optimized": "Explain JavaScript closures."
+    },
+    {
+      "original": "Could you kindly show me how to read and write files in Python?",
+      "optimized": "Python file read/write."
+    },
+    {
+      "original": "I am in need of your assistance to understand how to use Git branches.",
+      "optimized": "Explain Git branching."
+    },
+    {
+      "original": "Would you mind explaining how to create a virtual environment in Python?",
+      "optimized": "Create Python virtual environment."
+    },
+    {
+      "original": "Can you please help me with understanding what is a linked list data structure?",
+      "optimized": "Explain linked list structure."
+    },
+    {
+      "original": "I would be grateful if you could show me how to use list comprehensions in Python.",
+      "optimized": "Python list comprehension examples."
+    },
+    {
+      "original": "Please provide me with a detailed explanation of how promises work in JavaScript.",
+      "optimized": "Explain JavaScript promises."
+    },
+    {
+      "original": "Could you assist me in understanding how to implement a stack data structure?",
+      "optimized": "Implement stack data structure."
+    },
+    {
+      "original": "I need help with writing a SQL query that joins two tables.",
+      "optimized": "SQL table join query."
+    },
+    {
+      "original": "Would you be able to explain how to use decorators in Python?",
+      "optimized": "Explain Python decorators."
+    },
+    {
+      "original": "I am seeking your help to understand what is polymorphism in OOP.",
+      "optimized": "Explain OOP polymorphism."
+    },
+    {
+      "original": "Can you please show me how to validate form inputs in JavaScript?",
+      "optimized": "JavaScript form validation."
+    },
+    {
+      "original": "I would appreciate it if you could explain how to use context API in React.",
+      "optimized": "React Context API usage."
+    },
+    {
+      "original": "Please help me understand how to implement binary search algorithm.",
+      "optimized": "Implement binary search."
+    },
+    {
+      "original": "Could you kindly assist me with understanding how to use MongoDB aggregation pipeline?",
+      "optimized": "MongoDB aggregation pipeline."
+    },
+    {
+      "original": "I was wondering if you could explain how to handle state in React applications.",
+      "optimized": "React state management."
+    },
+    {
+      "original": "Would you please help me understand what is the difference between GET and POST requests?",
+      "optimized": "Compare GET vs POST requests."
+    },
+    {
+      "original": "I need your assistance in creating a login form with validation.",
+      "optimized": "Create validated login form."
+    },
+    {
+      "original": "Can you help me understand how to use environment variables in Node.js?",
+      "optimized": "Node.js environment variables."
+    },
+    {
+      "original": "I would like you to explain how to implement pagination in an API.",
+      "optimized": "Implement API pagination."
+    },
+    {
+      "original": "Please show me how to create a responsive grid layout using CSS Grid.",
+      "optimized": "CSS Grid responsive layout."
+    },
+    {
+      "original": "Could you help me understand the concept of middleware in Express.js?",
+      "optimized": "Explain Express middleware."
+    },
+    {
+      "original": "I am looking for help with implementing user authentication in Django.",
+      "optimized": "Django user authentication."
+    },
+    {
+      "original": "Would you be so kind as to explain how hash tables work?",
+      "optimized": "Explain hash tables."
+    },
+    {
+      "original": "I need your guidance on how to write clean and readable code.",
+      "optimized": "Clean code best practices."
+    },
+    {
+      "original": "Can you please help me understand what is Redux and how to use it?",
+      "optimized": "Explain Redux usage."
+    },
+    {
+      "original": "I would appreciate your help in understanding how to deploy to AWS.",
+      "optimized": "AWS deployment guide."
+    },
+    {
+      "original": "Please explain to me how to implement CORS in a Node.js application.",
+      "optimized": "Implement Node.js CORS."
+    },
+    {
+      "original": "Could you assist me in understanding what is GraphQL and its benefits?",
+      "optimized": "Explain GraphQL benefits."
+    },
+    {
+      "original": "I was hoping you might help me with setting up ESLint in my project.",
+      "optimized": "Set up ESLint."
+    },
+    {
+      "original": "Would you mind showing me how to create a dropdown menu in HTML/CSS?",
+      "optimized": "Create HTML/CSS dropdown menu."
+    },
+    {
+      "original": "I am in need of help understanding how to use TypeScript interfaces.",
+      "optimized": "TypeScript interfaces usage."
+    },
+    {
+      "original": "Can you please explain how to implement drag and drop functionality?",
+      "optimized": "Implement drag and drop."
+    },
+    {
+      "original": "I would be grateful for your help in understanding Docker compose.",
+      "optimized": "Explain Docker Compose."
+    },
+    {
+      "original": "Please help me understand how to use async iterators in Python.",
+      "optimized": "Python async iterators."
+    },
+    {
+      "original": "Could you kindly show me how to implement a queue data structure?",
+      "optimized": "Implement queue structure."
+    },
+    {
+      "original": "I need assistance with understanding how to use Selenium for web testing.",
+      "optimized": "Selenium web testing guide."
+    },
+    {
+      "original": "Would you be able to help me understand the observer pattern?",
+      "optimized": "Explain observer pattern."
+    },
+    {
+      "original": "I am looking for guidance on how to optimize React performance.",
+      "optimized": "React performance optimization."
+    },
+    {
+      "original": "Can you help me with understanding how to use CSS animations?",
+      "optimized": "CSS animations tutorial."
+    },
+    {
+      "original": "What is the purpose of using Docker in software development?",
+      "optimized": "Docker purpose in development."
+    },
+    {
+      "original": "How does the virtual DOM work in React?",
+      "optimized": "React virtual DOM explained."
+    },
+    {
+      "original": "Why should I use TypeScript instead of JavaScript?",
+      "optimized": "TypeScript vs JavaScript benefits."
+    },
+    {
+      "original": "When should I use a NoSQL database?",
+      "optimized": "NoSQL database use cases."
+    },
+    {
+      "original": "What are the benefits of using version control?",
+      "optimized": "Version control benefits."
+    },
+    {
+      "original": "How do I improve my code review skills?",
+      "optimized": "Improve code review skills."
+    },
+    {
+      "original": "What is the best way to learn programming?",
+      "optimized": "Best programming learning methods."
+    },
+    {
+      "original": "How can I make my website more accessible?",
+      "optimized": "Web accessibility best practices."
+    },
+    {
+      "original": "What tools should I use for debugging?",
+      "optimized": "Debugging tools recommendations."
+    },
+    {
+      "original": "How do I handle API errors properly?",
+      "optimized": "API error handling."
+    },
+    {
+      "original": "Make it better",
+      "optimized": "Improve"
+    },
+    {
+      "original": "Try again",
+      "optimized": "Retry"
+    },
+    {
+      "original": "Not working",
+      "optimized": "Debug"
+    },
+    {
+      "original": "Next step",
+      "optimized": "Continue"
+    },
+    {
+      "original": "Why this error",
+      "optimized": "Explain error"
+    },
+    {
+      "original": "Show me",
+      "optimized": "Demonstrate"
+    },
+    {
+      "original": "Format code",
+      "optimized": "Format"
+    },
+    {
+      "original": "Add comments",
+      "optimized": "Comment code"
+    },
+    {
+      "original": "Make shorter",
+      "optimized": "Condense"
+    },
+    {
+      "original": "More examples",
+      "optimized": "Examples"
+    },
+    {
+      "original": "I really really need your help please it is very urgent and important for me to understand exactly how the garbage collector works in the Java programming language virtual machine.",
+      "optimized": "Explain Java GC."
+    },
+    {
+      "original": "I have been trying for hours and hours to figure this out but I just cannot seem to understand how to properly implement authentication in my application so please help.",
+      "optimized": "Implement authentication."
+    },
+    {
+      "original": "This is extremely important and I absolutely must have your assistance with understanding every single detail about how recursion works.",
+      "optimized": "Explain recursion."
+    },
+    {
+      "original": "I am begging you please please please help me fix this bug in my code because I have been stuck on it for days.",
+      "optimized": "Fix code bug."
+    },
+    {
+      "original": "Okay so basically what I need is for you to like help me understand how like the event loop works in like JavaScript you know?",
+      "optimized": "Explain JavaScript event loop."
+    },
+    {
+      "original": "So um I was thinking that maybe perhaps you could possibly assist me with uh understanding databases better.",
+      "optimized": "Explain databases."
+    },
+    {
+      "original": "Alright so here's the thing right I need to figure out this whole microservices architecture thing yeah?",
+      "optimized": "Explain microservices architecture."
+    },
+    {
+      "original": "You know what I mean when I say I need help with like testing and stuff right?",
+      "optimized": "Testing guidance."
+    },
+    {
+      "original": "Like literally all I want is just some simple help with understanding APIs that's it nothing more.",
+      "optimized": "Explain APIs."
+    },
+    {
+      "original": "Honestly speaking truthfully I just genuinely really need to know how caching works okay?",
+      "optimized": "Explain caching."
+    },
+    {
+      "original": "It would be highly appreciated if you could demonstrate the proper methodology for constructing recursive algorithms in functional programming paradigms.",
+      "optimized": "Functional recursive algorithm example."
+    },
+    {
+      "original": "The necessity for comprehensive documentation regarding the implementation of design patterns in object-oriented software development is paramount.",
+      "optimized": "Document OOP design patterns."
+    },
+    {
+      "original": "Pursuant to my requirements, I necessitate elucidation on the architectural considerations for scalable distributed systems.",
+      "optimized": "Scalable distributed system architecture."
+    },
+    {
+      "original": "In accordance with industry best practices, please provide guidance on the implementation of continuous integration methodologies.",
+      "optimized": "CI implementation guide."
+    },
+    {
+      "original": "The requirement at hand pertains to the acquisition of knowledge regarding the optimization of database query performance.",
+      "optimized": "Optimize database queries."
+    },
+    {
+      "original": "With reference to the aforementioned technical specifications, elucidate the implementation of RESTful service architectures.",
+      "optimized": "Implement REST architecture."
+    },
+    {
+      "original": "As per the established protocols, kindly furnish information regarding security best practices in web development.",
+      "optimized": "Web security best practices."
+    },
+    {
+      "original": "In light of current technological advancements, provide insight into the utilization of machine learning algorithms.",
+      "optimized": "Machine learning algorithm usage."
+    },
+    {
+      "original": "Pursuant to the requirements specification document, detail the implementation of user interface components.",
+      "optimized": "Implement UI components."
+    },
+    {
+      "original": "With due consideration to performance metrics, outline the methodology for application profiling and optimization.",
+      "optimized": "Application profiling guide."
+    },
+    {
+      "original": "In the most absolutely incredibly profoundly detailed and comprehensive manner that you possibly could ever imagine providing, please explain what API stands for.",
+      "optimized": "Define API."
+    },
+    {
+      "original": "Would you perhaps maybe possibly consider potentially being so extraordinarily wonderfully kind as to explain variables?",
+      "optimized": "Explain variables."
+    },
+    {
+      "original": "If it is not too much trouble and you have the time and willingness and ability to do so, please define function.",
+      "optimized": "Define function."
+    },
+    {
+      "original": "I would be forever in your debt and eternally grateful and thankful if you simply told me what HTML is.",
+      "optimized": "Define HTML."
+    },
+    {
+      "original": "Please please please with sugar on top help me understand the very basic simple concept of what a loop does.",
+      "optimized": "Explain loops."
+    }
+  ]
+}
