@@ -6,7 +6,7 @@ import os
 def load_dataset_raw():
     os.makedirs("data/raw", exist_ok=True)
     #Load yelp review (full train split)
-    dataset = load_dataset('yelp_review_full', split="train")
+    dataset = load_dataset('yelp_review_full' ,split="train[:100000]")
 
     print(f"Loaded full dataset with {len(dataset)} rows.")
     #create a df with only prompt text
