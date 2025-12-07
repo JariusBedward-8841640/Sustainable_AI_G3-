@@ -1,7 +1,16 @@
 import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor, IsolationForest
+import sklearn.preprocessing as pp
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
 from src.nlp.complexity_score import ComplexityAnalyzer
+import matplotlib.pyplot as plt
+from typing import List, Dict, Union
 import os
 import sys
+import joblib
 
 # --- PATH SETUP ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -9,36 +18,63 @@ project_root = os.path.abspath(os.path.join(current_dir, '../..'))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from model.Energy_Predictor import EnergyModelTrainer
-
 class EnergyEstimator:
-    def __init__(self, model_type: str = "RandomForest"):
-        # --- MOCK DATA & TRAINING ---
-        # self.data = pd.DataFrame({
-        #     'num_layers': [2, 4, 6, 8, 10, 12, 100],
-        #     'training_hours': [1, 2, 3, 4, 5, 24, 48],
-        #     'flops_per_hour': [10, 20, 40, 60, 90, 100, 200], 
-        #     'energy_kwh': [0.5, 1.3, 2.8, 4.5, 6.9, 35.5, 80.2]
-        # })
+    def __init__(self, model_type: str = "RandomForest", test_size: float = 0.2, anomaly_contamination: float = 0.05):
 
         self.model_type = model_type
+        self.test_size = test_size
+        self.anomaly_contamination = anomaly_contamination
         
         # Join it with the filepath and the filename to get the absolute path
         features_file_path = os.path.join(project_root, "data", "processed", 'features_df.csv')
         energy_file_path = os.path.join(project_root, "data", "synthetic", 'energy_dataset.csv')
         
-        print(f"Reading file from: {energy_file_path}") # Debug print
+        # Define Model Directory and Dynamic Filename
+        model_dir = os.path.join(project_root, "model", 'energy_predictor')
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+            
+        # Filename now includes the model type
+        self.model_path = os.path.join(model_dir, f'energy_model_{self.model_type}.pkl')
         
-        # Read the file
+        # Read the data
         self.data = pd.read_csv(energy_file_path)
 
         # Define Features
-        FEATURES = ['num_layers', 'training_hours', 'flops_per_hour']
-        TARGET = 'energy_kwh'
+        self.FEATURES = ['num_layers', 'training_hours', 'flops_per_hour']
+        self.TARGET = 'energy_kwh'
 
-        # Instantiate and Train
-        self.trainer = EnergyModelTrainer(model_type=self.model_type)
-        self.trainer.train(self.data, FEATURES, TARGET)
+        # --- Model Selection ---
+        if self.model_type == "RandomForest":
+            self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        elif self.model_type == "LinearRegression":
+            self.model = LinearRegression()
+        else:
+            raise ValueError("model_type must be 'RandomForest' or 'LinearRegression'")
+            
+        # --- Anomaly Detection Model ---
+        self.anomaly_model = IsolationForest(contamination=anomaly_contamination, random_state=42)
+        
+        # Transformers
+        self.scaler_X = pp.MinMaxScaler()
+        self.scaler_y = pp.MinMaxScaler()
+
+        # State storage
+        self.metrics = {}
+        self.is_trained = False
+        self.feature_names = []
+        
+        # --- Initialize prediction state variables ---
+        self.latest_prediction = None
+        self.latest_layers = None
+
+        # --- Smart Load/Train Logic ---
+        if os.path.exists(self.model_path):
+            self.load_model(self.model_path)
+        else:
+            print(f"No existing model found for {self.model_type}. Training new model...")
+            self.train(self.data, self.FEATURES, self.TARGET)
+            self.save_model(self.model_path)
 
     def estimate(self, prompt_text, layers, training_hours, flops_str):
         # 1. Parse Inputs
@@ -57,8 +93,13 @@ class EnergyEstimator:
             'flops_per_hour': [flops_score]
         })
 
-        predicted_energy = self.trainer.predict_energy(input_data.iloc[0].to_dict())
+        # Get raw prediction
+        predicted_energy = self.predict_energy(input_data.iloc[0].to_dict())
         predicted_energy = max(0.1, predicted_energy)
+        
+        # --- Save prediction to instance variables for plotting ---
+        self.latest_prediction = predicted_energy
+        self.latest_layers = layers
 
         suggestion = "✅ Optimized."
         if predicted_energy > 50:
@@ -70,14 +111,209 @@ class EnergyEstimator:
             "energy_kwh": round(predicted_energy, 4),
             "carbon_kg": round(predicted_energy * 0.475, 4),
             "suggestion": suggestion,
-            "token_count": token_count
+            "token_count": token_count,
+            "predicted_val": predicted_energy 
+        }
+    
+    def preprocess_and_split(self, df: pd.DataFrame, feature_cols: List[str], target_col: str):
+        self.feature_names = feature_cols
+        
+        missing_cols = [c for c in feature_cols if c not in df.columns]
+        if missing_cols:
+            raise ValueError(f"Missing columns: {missing_cols}")
+
+        X = df[feature_cols].values
+        y = df[target_col].values.reshape(-1, 1)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=self.test_size, random_state=42
+        )
+
+        # Scale Data
+        X_train_scaled = self.scaler_X.fit_transform(X_train)
+        y_train_scaled = self.scaler_y.fit_transform(y_train)
+
+        X_test_scaled = self.scaler_X.transform(X_test)
+        y_test_scaled = self.scaler_y.transform(y_test)
+
+        return (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled)
+
+    def train(self, df: pd.DataFrame, feature_cols: List[str], target_col: str):
+        print(f"--- Starting Training ({self.model_type}) ---")
+        
+        (X_train, y_train), (X_test, y_test) = self.preprocess_and_split(df, feature_cols, target_col)
+
+        self.model.fit(X_train, y_train.ravel())
+        self.anomaly_model.fit(X_train)
+        
+        self.is_trained = True
+        self._evaluate(X_test, y_test)
+        
+        print(f"Training complete. R2 Score: {self.metrics['r2']:.4f}")
+
+    def _evaluate(self, X_test_scaled, y_test_scaled):
+        preds_scaled = self.model.predict(X_test_scaled)
+        y_test_real = self.scaler_y.inverse_transform(y_test_scaled).flatten()
+        preds_real = self.scaler_y.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
+
+        self.metrics = {
+            "mse": mean_squared_error(y_test_real, preds_real),
+            "r2": r2_score(y_test_real, preds_real)
         }
 
-    def get_training_plot(self):
-        """
-        Generates the matplotlib figure for Actual vs Predicted Energy.
-        """
+        self.y_test_real = y_test_real
+        self.preds_real = preds_real
 
-        fig = self.trainer.visualize_performance()
+    def _prepare_input(self, input_data: dict) -> np.array:
+        try:
+            raw_values = [input_data[f] for f in self.feature_names]
+        except KeyError as e:
+            raise ValueError(f"Input is missing feature: {e}")
+        return np.array([raw_values])
+
+    def predict_energy(self, input_data: dict) -> float:
+        if not self.is_trained:
+            raise ValueError("Model not trained.")
         
+        input_array = self._prepare_input(input_data)
+        X_scaled = self.scaler_X.transform(input_array)
+        pred_scaled = self.model.predict(X_scaled)
+        
+        return self.scaler_y.inverse_transform(pred_scaled.reshape(-1, 1)).flatten()[0]
+
+    def detect_anomaly(self, input_data: dict) -> Dict[str, Union[bool, str]]:
+        if not self.is_trained:
+            raise ValueError("Model not trained.")
+            
+        input_array = self._prepare_input(input_data)
+        X_scaled = self.scaler_X.transform(input_array)
+        
+        prediction = self.anomaly_model.predict(X_scaled)[0]
+        return {
+            "is_anomaly": True if prediction == -1 else False, 
+            "status": "ANOMALY DETECTED" if prediction == -1 else "Normal Operation"
+        }
+    
+    # --- Persistence Methods ---
+    def save_model(self, file_path: str = None):
+        """Saves the entire state."""
+        if not self.is_trained:
+            raise ValueError("Cannot save an untrained model.")
+        
+        # Use the instance path if none provided
+        path_to_save = file_path if file_path else self.model_path
+
+        artifact = {
+            "model": self.model,
+            "anomaly_model": self.anomaly_model,
+            "scaler_X": self.scaler_X,
+            "scaler_y": self.scaler_y,
+            "feature_names": self.feature_names,
+            "metrics": self.metrics,
+            "model_type": self.model_type
+        }
+        joblib.dump(artifact, path_to_save)
+        print(f"Model saved to {path_to_save}")
+
+    def load_model(self, filename: str):
+        if not os.path.exists(filename):
+            raise FileNotFoundError(f"No file found at {filename}")
+            
+        artifact = joblib.load(filename)
+        
+        self.model = artifact["model"]
+        self.anomaly_model = artifact["anomaly_model"]
+        self.scaler_X = artifact["scaler_X"]
+        self.scaler_y = artifact["scaler_y"]
+        self.feature_names = artifact["feature_names"]
+        self.metrics = artifact["metrics"]
+        self.model_type = artifact["model_type"]
+        self.is_trained = True
+        print(f"Model loaded from {filename}")    
+
+    def get_training_plot(self, num_points: int = None):
+        if not self.is_trained:
+            raise ValueError("Model not trained.")
+
+        target_col = "energy_kwh"
+
+        # --- Retrieve or reconstruct actual+predicted values ---
+        if not hasattr(self, "y_test_real"):
+            (X_scaled, y_scaled), _ = self.preprocess_and_split(
+                self.data, self.feature_names, target_col
+            )
+            preds_scaled = self.model.predict(X_scaled)
+
+            y_real = self.scaler_y.inverse_transform(y_scaled).flatten()
+            preds_real = self.scaler_y.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
+        else:
+            y_real = self.y_test_real
+            preds_real = self.preds_real
+
+        # Slice for plotting
+        if num_points is not None:
+            limit = min(num_points, len(y_real))
+            y_real = y_real[:limit]
+            preds_real = preds_real[:limit]
+
+        x = np.arange(1, len(y_real) + 1)
+
+        # --- Create Plot ---
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        ax.plot(x, y_real, label="Actual", color="#1f77b4", marker="o")
+        ax.plot(x, preds_real, label="Predicted", color="#ff7f0e",
+                linestyle="--", marker="x")
+
+        # --------------------------------------------------------
+        #              HIGHLIGHT THE LATEST PREDICTION
+        # --------------------------------------------------------
+        if self.latest_layers is not None and self.latest_prediction is not None:
+            lx = self.latest_layers          # number of layers
+            ly = self.latest_prediction      # predicted kWh
+
+            # Convert "layers" to correct x-location.
+            # If your x-axis is layers, use lx directly.
+            # If your x-axis is sample index, then:
+            x_pred = lx
+
+            # Vertical line
+            ax.vlines(
+                x_pred, ymin=0, ymax=ly,
+                colors="cyan", linewidth=2, zorder=5
+            )
+
+            # Horizontal line
+            ax.hlines(
+                ly, xmin=1, xmax=x_pred,
+                colors="orange", linewidth=2, zorder=5
+            )
+
+            # Marker (diamond)
+            ax.scatter(
+                x_pred, ly,
+                s=120, marker="D",
+                facecolor="cyan",
+                edgecolor="orange",
+                linewidth=2,
+                zorder=10
+            )
+
+            # Text bubble
+            ax.annotate(
+                "Prediction",
+                xy=(x_pred, ly),
+                xytext=(x_pred + 0.8, ly + 0.8),
+                bbox=dict(boxstyle="round,pad=0.4", fc="cyan"),
+                arrowprops=dict(arrowstyle="->"),
+                zorder=11
+            )
+
+        # Axis settings
+        ax.set_title(f"Energy Prediction vs Actual ({self.model_type})")
+        ax.set_xlabel("Number of Layers")
+        ax.set_ylabel("Energy Consumption (kWh)")
+        ax.grid(True, alpha=0.4)
+        ax.legend()
+
         return fig

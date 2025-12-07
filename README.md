@@ -1,9 +1,10 @@
 # Sustainable AI - Transparency and Energy-Efficient Prompt/Context Engineering with Machine Learning (CSCN8010)
 
-##  Project Members:
+## Project Members:
+
     1. Jarius Bedward - 8841640
     2. Mostafa Allahmoradi - 9087818
-    3. Oluwafemi Lawal
+    3. Oluwafemi Lawal - 8967308
     4. Jatinder Pal Singh: - 9083762
 
 ## Project Summary:
@@ -12,8 +13,8 @@ This project addresses the critical environmental impact of the rapid expansion 
 
 ## Project Setup:
 
-
 ## **Key Features:**
+
 - **User Interface (GUI):**
   - Built with Streamlit/Flask to accept user prompts and model parameters (Layers, Training Time, FLOPs).
   - Visualizes energy costs and recommended improvements side-by-side.
@@ -31,9 +32,10 @@ This project addresses the critical environmental impact of the rapid expansion 
   - Uses fine-tuned models (T5/GPT-2) for paraphrasing and simplification.
 
 ## Requirements:
+
     - pip install -r requirements.txt
 
-##  🎯  How to Run:
+## 🎯 How to Run:
 
 1. Clone this repo (git clone <repo-url> cd <repo-folder>)
 2. Install Required Dependencies: "pip install -r requirements.txt"
@@ -41,26 +43,30 @@ This project addresses the critical environmental impact of the rapid expansion 
 4. Run the application: `streamlit run app.py` (or `python app.py`)
 5. Input a prompt
 
-
 ## Code Explanation/Workflow:
 
 1. **User Input & Configuration**
+
    - The user submits a text prompt via the GUI.
    - User provides LLM architecture details: Number of Layers, Known Training Time, and Expected FLOPs/hour.
 
 2. **NLP Preprocessing**
+
    - The system calculates the token count and complexity score of the input text.
    - Vector embeddings are generated to capture the semantic meaning for the optimization engine.
 
 3. **Energy Prediction (Supervised)**
+
    - The extracted features are passed to the Energy Prediction Model.
    - The model estimates the specific energy cost (kWh) for processing that prompt.
 
 4. **Anomaly Detection (Unsupervised)**
+
    - The input metrics are cross-referenced with normal usage patterns using the Anomaly Detection Module.
    - Outliers are flagged (e.g., if a prompt requires excessive computation relative to its length).
 
 5. **Optimization & Recommendation**
+
    - The Prompt Optimizer searches for or generates a more efficient version of the prompt.
    - It targets a lower token count or complexity while maintaining the original intent.
 
@@ -68,13 +74,14 @@ This project addresses the critical environmental impact of the rapid expansion 
    - The estimated energy and the optimized prompt are displayed to the user.
    - Data is
 
-### Final Conclusion: 
-    - This project demonstrates a proof-of-concept for "Sustainable AI" by linking NLP inputs directly to physical energy estimates. 
+### Final Conclusion:
+
+    - This project demonstrates a proof-of-concept for "Sustainable AI" by linking NLP inputs directly to physical energy estimates.
     - The application successfully...
     - By integrating anomaly detection and prompt optimization...
 
 ### 🤝 Contributing
-This is a Final Project Protocol developed for CSCN8010. If any questions arise do not hesitate to contact the project member.
 
+This is a Final Project Protocol developed for CSCN8010. If any questions arise do not hesitate to contact the project member.
 
 ### References:

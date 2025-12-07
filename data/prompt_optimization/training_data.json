@@ -1,0 +1,706 @@
+{
+  "version": "1.0.0",
+  "description": "Training data for T5 prompt optimization model. Each entry contains a verbose/complex prompt and its optimized energy-efficient version.",
+  "data": [
+    {
+      "id": 1,
+      "original": "Can you please help me understand what the concept of machine learning is and how it works in simple terms?",
+      "optimized": "Explain machine learning simply.",
+      "category": "explanation",
+      "complexity_reduction": 0.85
+    },
+    {
+      "id": 2,
+      "original": "I was wondering if you could possibly provide me with a detailed explanation of how neural networks function.",
+      "optimized": "How do neural networks work?",
+      "category": "explanation",
+      "complexity_reduction": 0.82
+    },
+    {
+      "id": 3,
+      "original": "Could you kindly assist me in writing a Python function that calculates the factorial of a number?",
+      "optimized": "Write Python factorial function.",
+      "category": "coding",
+      "complexity_reduction": 0.78
+    },
+    {
+      "id": 4,
+      "original": "I would really appreciate it if you could help me debug this code that isn't working properly.",
+      "optimized": "Debug this code.",
+      "category": "coding",
+      "complexity_reduction": 0.80
+    },
+    {
+      "id": 5,
+      "original": "Please provide me with a comprehensive summary of the key points discussed in the following article about climate change.",
+      "optimized": "Summarize this climate change article.",
+      "category": "summarization",
+      "complexity_reduction": 0.75
+    },
+    {
+      "id": 6,
+      "original": "Would you be so kind as to translate the following English text into French for me please?",
+      "optimized": "Translate to French:",
+      "category": "translation",
+      "complexity_reduction": 0.83
+    },
+    {
+      "id": 7,
+      "original": "I'm trying to understand the differences between supervised learning and unsupervised learning. Could you explain?",
+      "optimized": "Compare supervised vs unsupervised learning.",
+      "category": "explanation",
+      "complexity_reduction": 0.70
+    },
+    {
+      "id": 8,
+      "original": "Can you please write a SQL query that selects all users from the database who registered in the last month?",
+      "optimized": "SQL query: select users registered last month.",
+      "category": "coding",
+      "complexity_reduction": 0.72
+    },
+    {
+      "id": 9,
+      "original": "I would like you to create a comprehensive list of the top 10 programming languages in 2024.",
+      "optimized": "List top 10 programming languages 2024.",
+      "category": "list",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 10,
+      "original": "Could you please explain to me in great detail what the difference is between REST APIs and GraphQL?",
+      "optimized": "Compare REST API vs GraphQL.",
+      "category": "explanation",
+      "complexity_reduction": 0.77
+    },
+    {
+      "id": 11,
+      "original": "Help me",
+      "optimized": "Help me",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 12,
+      "original": "What is AI?",
+      "optimized": "What is AI?",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 13,
+      "original": "Define recursion",
+      "optimized": "Define recursion",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 14,
+      "original": "I was hoping that you might be able to assist me with generating some creative ideas for a mobile app that helps people track their daily water intake.",
+      "optimized": "Generate ideas for water intake tracking app.",
+      "category": "creative",
+      "complexity_reduction": 0.76
+    },
+    {
+      "id": 15,
+      "original": "Would it be possible for you to review the following code and provide suggestions for optimization and performance improvements?",
+      "optimized": "Review and optimize this code.",
+      "category": "coding",
+      "complexity_reduction": 0.74
+    },
+    {
+      "id": 16,
+      "original": "I'm in need of your assistance to write a regular expression that validates email addresses.",
+      "optimized": "Regex for email validation.",
+      "category": "coding",
+      "complexity_reduction": 0.72
+    },
+    {
+      "id": 17,
+      "original": "Can you help me understand the concept of object-oriented programming and its four main principles?",
+      "optimized": "Explain OOP and its four principles.",
+      "category": "explanation",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 18,
+      "original": "I would appreciate it if you could provide me with a step-by-step guide on how to deploy a Docker container.",
+      "optimized": "Docker container deployment guide.",
+      "category": "tutorial",
+      "complexity_reduction": 0.71
+    },
+    {
+      "id": 19,
+      "original": "Please be so kind as to explain the differences between TCP and UDP protocols in networking.",
+      "optimized": "Compare TCP vs UDP protocols.",
+      "category": "explanation",
+      "complexity_reduction": 0.73
+    },
+    {
+      "id": 20,
+      "original": "Could you possibly assist me in creating a responsive navigation bar using HTML and CSS?",
+      "optimized": "Create responsive navbar in HTML/CSS.",
+      "category": "coding",
+      "complexity_reduction": 0.69
+    },
+    {
+      "id": 21,
+      "original": "I'm looking for help with understanding how to implement authentication in a Node.js application using JWT tokens.",
+      "optimized": "Implement JWT authentication in Node.js.",
+      "category": "coding",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 22,
+      "original": "Would you mind explaining to me the concept of Big O notation and its importance in algorithm analysis?",
+      "optimized": "Explain Big O notation in algorithms.",
+      "category": "explanation",
+      "complexity_reduction": 0.70
+    },
+    {
+      "id": 23,
+      "original": "I need your help in writing a bash script that automatically backs up a directory to a remote server.",
+      "optimized": "Bash script for remote directory backup.",
+      "category": "coding",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 24,
+      "original": "Can you please provide me with detailed information about the SOLID principles in software development?",
+      "optimized": "Explain SOLID principles.",
+      "category": "explanation",
+      "complexity_reduction": 0.72
+    },
+    {
+      "id": 25,
+      "original": "I would be grateful if you could help me understand the basics of quantum computing.",
+      "optimized": "Explain quantum computing basics.",
+      "category": "explanation",
+      "complexity_reduction": 0.71
+    },
+    {
+      "id": 26,
+      "original": "Please assist me in writing a Python script that scrapes data from a website and saves it to a CSV file.",
+      "optimized": "Python web scraper to CSV.",
+      "category": "coding",
+      "complexity_reduction": 0.66
+    },
+    {
+      "id": 27,
+      "original": "Could you kindly explain the differences between microservices architecture and monolithic architecture?",
+      "optimized": "Compare microservices vs monolithic architecture.",
+      "category": "explanation",
+      "complexity_reduction": 0.69
+    },
+    {
+      "id": 28,
+      "original": "I am wondering if you could help me create a function in JavaScript that debounces user input.",
+      "optimized": "JavaScript debounce function.",
+      "category": "coding",
+      "complexity_reduction": 0.70
+    },
+    {
+      "id": 29,
+      "original": "Would you be able to provide me with a comprehensive explanation of how blockchain technology works?",
+      "optimized": "Explain blockchain technology.",
+      "category": "explanation",
+      "complexity_reduction": 0.73
+    },
+    {
+      "id": 30,
+      "original": "I'm hoping you can assist me in understanding the concept of containerization and how Docker works.",
+      "optimized": "Explain containerization and Docker.",
+      "category": "explanation",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 31,
+      "original": "Please provide me with a detailed comparison between relational databases and NoSQL databases.",
+      "optimized": "Compare relational vs NoSQL databases.",
+      "category": "comparison",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 32,
+      "original": "Can you please help me write a recursive function in Python that generates Fibonacci numbers?",
+      "optimized": "Python recursive Fibonacci function.",
+      "category": "coding",
+      "complexity_reduction": 0.64
+    },
+    {
+      "id": 33,
+      "original": "I would greatly appreciate your assistance in explaining how garbage collection works in Java.",
+      "optimized": "Explain Java garbage collection.",
+      "category": "explanation",
+      "complexity_reduction": 0.71
+    },
+    {
+      "id": 34,
+      "original": "Could you possibly explain the concept of API rate limiting and how to implement it?",
+      "optimized": "Explain and implement API rate limiting.",
+      "category": "explanation",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 35,
+      "original": "I need your help with understanding how to set up continuous integration and continuous deployment pipelines.",
+      "optimized": "Explain CI/CD pipeline setup.",
+      "category": "explanation",
+      "complexity_reduction": 0.66
+    },
+    {
+      "id": 36,
+      "original": "Please be kind enough to explain the differences between process and thread in operating systems.",
+      "optimized": "Compare process vs thread in OS.",
+      "category": "explanation",
+      "complexity_reduction": 0.70
+    },
+    {
+      "id": 37,
+      "original": "Would you mind helping me understand how to implement a binary search tree in C++?",
+      "optimized": "Implement binary search tree in C++.",
+      "category": "coding",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 38,
+      "original": "I'm trying to understand the concept of dependency injection. Could you explain it to me?",
+      "optimized": "Explain dependency injection.",
+      "category": "explanation",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 39,
+      "original": "Can you please assist me in writing unit tests for a React component using Jest?",
+      "optimized": "Write Jest unit tests for React component.",
+      "category": "testing",
+      "complexity_reduction": 0.63
+    },
+    {
+      "id": 40,
+      "original": "I would like you to explain the concept of eventual consistency in distributed systems.",
+      "optimized": "Explain eventual consistency in distributed systems.",
+      "category": "explanation",
+      "complexity_reduction": 0.58
+    },
+    {
+      "id": 41,
+      "original": "Please help me understand how to implement websockets for real-time communication in a web application.",
+      "optimized": "Implement websockets for real-time communication.",
+      "category": "coding",
+      "complexity_reduction": 0.62
+    },
+    {
+      "id": 42,
+      "original": "Could you kindly provide me with a detailed explanation of the MapReduce programming model?",
+      "optimized": "Explain MapReduce programming model.",
+      "category": "explanation",
+      "complexity_reduction": 0.69
+    },
+    {
+      "id": 43,
+      "original": "I am in need of assistance with understanding how to optimize database queries for better performance.",
+      "optimized": "Optimize database query performance.",
+      "category": "optimization",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 44,
+      "original": "Would you be so kind as to explain the concept of serverless computing and its benefits?",
+      "optimized": "Explain serverless computing benefits.",
+      "category": "explanation",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 45,
+      "original": "I'm hoping you could help me understand how to implement authentication using OAuth 2.0.",
+      "optimized": "Implement OAuth 2.0 authentication.",
+      "category": "coding",
+      "complexity_reduction": 0.66
+    },
+    {
+      "id": 46,
+      "original": "Please provide me with an explanation of the CAP theorem and its implications for distributed databases.",
+      "optimized": "Explain CAP theorem for distributed databases.",
+      "category": "explanation",
+      "complexity_reduction": 0.64
+    },
+    {
+      "id": 47,
+      "original": "Can you help me create a Python class that implements the singleton design pattern?",
+      "optimized": "Python singleton pattern implementation.",
+      "category": "coding",
+      "complexity_reduction": 0.63
+    },
+    {
+      "id": 48,
+      "original": "I would appreciate it if you could explain the concept of event-driven architecture.",
+      "optimized": "Explain event-driven architecture.",
+      "category": "explanation",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 49,
+      "original": "Could you please help me understand how memory management works in programming languages?",
+      "optimized": "Explain memory management in programming.",
+      "category": "explanation",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 50,
+      "original": "I need your assistance in implementing a message queue system using RabbitMQ.",
+      "optimized": "Implement RabbitMQ message queue.",
+      "category": "coding",
+      "complexity_reduction": 0.62
+    },
+    {
+      "id": 51,
+      "original": "Write code",
+      "optimized": "Write code",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 52,
+      "original": "Explain this",
+      "optimized": "Explain this",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 53,
+      "original": "Fix bug",
+      "optimized": "Fix bug",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 54,
+      "original": "More details",
+      "optimized": "More details",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 55,
+      "original": "Generate test",
+      "optimized": "Generate test",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 56,
+      "original": "I was hoping that perhaps you might be able to possibly help me with writing some Python code that can efficiently process and analyze large datasets using pandas library.",
+      "optimized": "Python pandas code for large dataset analysis.",
+      "category": "coding",
+      "complexity_reduction": 0.79
+    },
+    {
+      "id": 57,
+      "original": "Would it at all be possible for you to kindly and thoroughly explain to me what exactly constitutes artificial intelligence and how it differs from traditional programming approaches?",
+      "optimized": "Explain AI vs traditional programming.",
+      "category": "explanation",
+      "complexity_reduction": 0.85
+    },
+    {
+      "id": 58,
+      "original": "I am writing to request your most valuable assistance in the matter of understanding the intricate details of how convolutional neural networks process images for computer vision tasks.",
+      "optimized": "Explain CNN image processing for computer vision.",
+      "category": "explanation",
+      "complexity_reduction": 0.82
+    },
+    {
+      "id": 59,
+      "original": "Could you be so gracious as to provide me with a most comprehensive and detailed walkthrough of the process involved in setting up a production-ready Kubernetes cluster?",
+      "optimized": "Guide for production Kubernetes cluster setup.",
+      "category": "tutorial",
+      "complexity_reduction": 0.78
+    },
+    {
+      "id": 60,
+      "original": "I find myself in dire need of your expertise and would be most grateful if you could assist me in comprehending the fundamental concepts behind natural language processing.",
+      "optimized": "Explain NLP fundamentals.",
+      "category": "explanation",
+      "complexity_reduction": 0.88
+    },
+    {
+      "id": 61,
+      "original": "It would be tremendously helpful if you could take the time to explain to me in very simple and easy to understand terms what the concept of reinforcement learning entails.",
+      "optimized": "Explain reinforcement learning simply.",
+      "category": "explanation",
+      "complexity_reduction": 0.81
+    },
+    {
+      "id": 62,
+      "original": "I humbly request that you provide me with your most knowledgeable insights regarding the implementation of secure authentication mechanisms in modern web applications.",
+      "optimized": "Implement secure web authentication.",
+      "category": "coding",
+      "complexity_reduction": 0.77
+    },
+    {
+      "id": 63,
+      "original": "Summarize",
+      "optimized": "Summarize",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 64,
+      "original": "List options",
+      "optimized": "List options",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 65,
+      "original": "Compare them",
+      "optimized": "Compare them",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 66,
+      "original": "In the following text, I would like you to identify and extract all the key entities, their relationships, and provide a comprehensive summary of the main themes discussed.",
+      "optimized": "Extract entities, relationships, and summarize themes.",
+      "category": "analysis",
+      "complexity_reduction": 0.74
+    },
+    {
+      "id": 67,
+      "original": "I need you to analyze the sentiment of the following customer reviews and categorize them as positive, negative, or neutral.",
+      "optimized": "Classify review sentiment: positive/negative/neutral.",
+      "category": "analysis",
+      "complexity_reduction": 0.68
+    },
+    {
+      "id": 68,
+      "original": "Please take the following lengthy document and condense it into a brief executive summary that captures all the essential points.",
+      "optimized": "Create executive summary of document.",
+      "category": "summarization",
+      "complexity_reduction": 0.70
+    },
+    {
+      "id": 69,
+      "original": "I would like you to generate a detailed comparison table showing the pros and cons of different programming frameworks.",
+      "optimized": "Create pros/cons comparison table for frameworks.",
+      "category": "comparison",
+      "complexity_reduction": 0.66
+    },
+    {
+      "id": 70,
+      "original": "Can you please review the following essay and provide detailed feedback on grammar, structure, and overall clarity?",
+      "optimized": "Review essay for grammar, structure, clarity.",
+      "category": "review",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 71,
+      "original": "I am seeking your assistance to brainstorm innovative solutions for reducing carbon emissions in urban transportation systems.",
+      "optimized": "Brainstorm urban transport carbon reduction solutions.",
+      "category": "creative",
+      "complexity_reduction": 0.69
+    },
+    {
+      "id": 72,
+      "original": "Could you please provide me with a comprehensive list of best practices for writing clean, maintainable, and scalable code?",
+      "optimized": "List clean code best practices.",
+      "category": "list",
+      "complexity_reduction": 0.71
+    },
+    {
+      "id": 73,
+      "original": "I need help with designing a database schema that efficiently handles user profiles, posts, comments, and likes.",
+      "optimized": "Design database schema for social media app.",
+      "category": "design",
+      "complexity_reduction": 0.64
+    },
+    {
+      "id": 74,
+      "original": "Would you be willing to help me refactor this legacy code to follow modern design patterns and improve readability?",
+      "optimized": "Refactor legacy code with modern patterns.",
+      "category": "coding",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 75,
+      "original": "I require your assistance in creating comprehensive API documentation for the following REST endpoints.",
+      "optimized": "Create REST API documentation.",
+      "category": "documentation",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 76,
+      "original": "Please analyze the time complexity and space complexity of the following algorithm and suggest optimizations.",
+      "optimized": "Analyze and optimize algorithm complexity.",
+      "category": "analysis",
+      "complexity_reduction": 0.63
+    },
+    {
+      "id": 77,
+      "original": "I am looking for guidance on implementing proper error handling and logging in a production Python application.",
+      "optimized": "Implement Python error handling and logging.",
+      "category": "coding",
+      "complexity_reduction": 0.64
+    },
+    {
+      "id": 78,
+      "original": "Could you assist me in writing a comprehensive test suite that covers unit tests, integration tests, and end-to-end tests?",
+      "optimized": "Write comprehensive test suite.",
+      "category": "testing",
+      "complexity_reduction": 0.65
+    },
+    {
+      "id": 79,
+      "original": "I would like you to explain the trade-offs between different caching strategies and help me choose the best one.",
+      "optimized": "Compare caching strategies and recommend.",
+      "category": "explanation",
+      "complexity_reduction": 0.66
+    },
+    {
+      "id": 80,
+      "original": "Please provide me with a step-by-step migration plan for moving our monolithic application to a microservices architecture.",
+      "optimized": "Monolith to microservices migration plan.",
+      "category": "planning",
+      "complexity_reduction": 0.67
+    },
+    {
+      "id": 81,
+      "original": "Calculate",
+      "optimized": "Calculate",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 82,
+      "original": "Show example",
+      "optimized": "Show example",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 83,
+      "original": "Continue",
+      "optimized": "Continue",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 84,
+      "original": "Translate this",
+      "optimized": "Translate this",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 85,
+      "original": "Expand on that",
+      "optimized": "Expand on that",
+      "category": "short",
+      "complexity_reduction": 0.0
+    },
+    {
+      "id": 86,
+      "original": "I urgently need your expert opinion and detailed guidance on the best approach to implement real-time data synchronization between multiple client applications.",
+      "optimized": "Implement multi-client real-time data sync.",
+      "category": "coding",
+      "complexity_reduction": 0.72
+    },
+    {
+      "id": 87,
+      "original": "It would be incredibly beneficial for my understanding if you could thoroughly and comprehensively explain how distributed consensus algorithms like Raft and Paxos work.",
+      "optimized": "Explain Raft and Paxos consensus algorithms.",
+      "category": "explanation",
+      "complexity_reduction": 0.75
+    },
+    {
+      "id": 88,
+      "original": "I am reaching out to you with a humble request for assistance in understanding the intricacies of implementing a load balancer for high-traffic web applications.",
+      "optimized": "Implement load balancer for high-traffic apps.",
+      "category": "coding",
+      "complexity_reduction": 0.76
+    },
+    {
+      "id": 89,
+      "original": "I would be extremely grateful and appreciative if you could take the time to walk me through the process of setting up monitoring and alerting for a production system.",
+      "optimized": "Set up production monitoring and alerting.",
+      "category": "tutorial",
+      "complexity_reduction": 0.77
+    },
+    {
+      "id": 90,
+      "original": "Could you please be so kind as to provide me with your expert insights on implementing blue-green deployments for zero-downtime releases?",
+      "optimized": "Implement blue-green deployment for zero downtime.",
+      "category": "coding",
+      "complexity_reduction": 0.71
+    },
+    {
+      "id": 91,
+      "original": "I find myself in need of your valuable assistance to understand the nuances and best practices of implementing event sourcing in a microservices architecture.",
+      "optimized": "Implement event sourcing in microservices.",
+      "category": "coding",
+      "complexity_reduction": 0.74
+    },
+    {
+      "id": 92,
+      "original": "I am extremely interested in learning about and would greatly appreciate a detailed explanation of how to implement circuit breaker pattern for fault tolerance.",
+      "optimized": "Implement circuit breaker pattern.",
+      "category": "coding",
+      "complexity_reduction": 0.76
+    },
+    {
+      "id": 93,
+      "original": "Help me with a problem",
+      "optimized": "Help solve problem",
+      "category": "short",
+      "complexity_reduction": 0.25
+    },
+    {
+      "id": 94,
+      "original": "Give me an example",
+      "optimized": "Give example",
+      "category": "short",
+      "complexity_reduction": 0.25
+    },
+    {
+      "id": 95,
+      "original": "Tell me more about it",
+      "optimized": "Elaborate",
+      "category": "short",
+      "complexity_reduction": 0.50
+    },
+    {
+      "id": 96,
+      "original": "I would absolutely love it if you could create for me a very detailed and comprehensive tutorial that walks me through every single step of building a complete full-stack web application from scratch using React for the frontend and Node.js with Express for the backend along with MongoDB as the database.",
+      "optimized": "Full-stack tutorial: React, Node.js, Express, MongoDB.",
+      "category": "tutorial",
+      "complexity_reduction": 0.87
+    },
+    {
+      "id": 97,
+      "original": "In the most thorough and detailed manner possible, I would like you to please explain to me each and every aspect of how transformer models work in natural language processing, including the attention mechanism, positional encoding, and the encoder-decoder architecture.",
+      "optimized": "Explain transformer models: attention, positional encoding, encoder-decoder.",
+      "category": "explanation",
+      "complexity_reduction": 0.84
+    },
+    {
+      "id": 98,
+      "original": "I am hereby formally requesting your most comprehensive assistance in the endeavor of understanding and implementing a complete end-to-end machine learning pipeline that includes data preprocessing, feature engineering, model training, hyperparameter tuning, and deployment.",
+      "optimized": "Build end-to-end ML pipeline: preprocessing to deployment.",
+      "category": "coding",
+      "complexity_reduction": 0.85
+    },
+    {
+      "id": 99,
+      "original": "Would you be so incredibly gracious and generous with your time as to provide me with an exhaustively detailed and meticulously comprehensive explanation of how to design and implement a highly scalable and fault-tolerant distributed system architecture?",
+      "optimized": "Design scalable fault-tolerant distributed system.",
+      "category": "design",
+      "complexity_reduction": 0.86
+    },
+    {
+      "id": 100,
+      "original": "I am currently in desperate need of your expert knowledge and would be eternally grateful if you could assist me in understanding the complete and full process of implementing a robust and secure authentication and authorization system using industry-standard protocols.",
+      "optimized": "Implement secure authentication system.",
+      "category": "coding",
+      "complexity_reduction": 0.84
+    }
+  ]
+}
