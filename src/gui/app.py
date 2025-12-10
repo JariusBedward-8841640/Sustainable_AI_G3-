@@ -141,6 +141,7 @@ if st.session_state['step'] >= 1:
     st.markdown("#### Initial Model Performance")
     with st.expander("📈 View Energy Performance Graph", expanded=True):
         estimator = EnergyEstimator(model_type=model_type)
+        results = estimator.estimate(prompt_text, layers, training_time, flops_input)
         fig = estimator.get_training_plot(layers)
         st.pyplot(fig)
     
@@ -471,7 +472,8 @@ if st.session_state['step'] == 2:
     
     with st.expander("📉 View Optimized Performance Graph", expanded=True):
         estimator = EnergyEstimator(model_type=model_type)
-        fig = estimator.get_training_plot(layers)
+        results = estimator.estimate(st.session_state['better_prompt'], improved_layers, improved_time, flops_input)
+        fig = estimator.get_training_plot(improved_layers)
         st.pyplot(fig)
     
     # Reset button
