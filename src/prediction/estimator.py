@@ -45,7 +45,7 @@ class EnergyEstimator:
         self.data = pd.read_csv(energy_file_path)
 
         # Define Features
-        self.FEATURES = ['num_layers', 'training_hours', 'flops_per_hour']
+        self.FEATURES = ['num_layers', 'training_hours', 'flops_per_hour', 'token_count', 'avg_word_length']
         self.TARGET = 'energy_kwh'
 
         self.anomaly_contamination = anomaly_contamination
@@ -91,7 +91,9 @@ class EnergyEstimator:
         input_data = pd.DataFrame({
             'num_layers': [layers],
             'training_hours': [training_hours],
-            'flops_per_hour': [flops_score]
+            'flops_per_hour': [flops_score],
+            'token_count': [token_count],
+            'avg_word_length': [ComplexityAnalyzer.get_avg_word_length(prompt_text)]
         })
 
         # Get raw prediction
