@@ -5,7 +5,6 @@ import sklearn.preprocessing as pp
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from src.nlp.complexity_score import ComplexityAnalyzer
 import matplotlib.pyplot as plt
 from typing import List, Dict, Union
 import os
@@ -18,25 +17,30 @@ project_root = os.path.abspath(os.path.join(current_dir, '../..'))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
+from src.nlp.complexity_score import ComplexityAnalyzer
+
 class EnergyEstimator:
     def __init__(self, model_type: str = "RandomForest", test_size: float = 0.2, anomaly_contamination: float = 0.05):
 
-        self.model_type = model_type
         self.test_size = test_size
-        self.anomaly_contamination = anomaly_contamination
+
+        # Transformers
+        self.scaler_X = pp.MinMaxScaler()
+        self.scaler_y = pp.MinMaxScaler()
+
+        # --- Model Selection ---
+        if model_type == "RandomForest":
+            self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        elif model_type == "LinearRegression":
+            self.model = LinearRegression()
+        else:
+            raise ValueError("model_type must be 'RandomForest' or 'LinearRegression'")
+        
+        self.model_type = model_type
         
         # Join it with the filepath and the filename to get the absolute path
         features_file_path = os.path.join(project_root, "data", "processed", 'features_df.csv')
         energy_file_path = os.path.join(project_root, "data", "synthetic", 'energy_dataset.csv')
-        
-        # Define Model Directory and Dynamic Filename
-        model_dir = os.path.join(project_root, "model", 'energy_predictor')
-        if not os.path.exists(model_dir):
-            os.makedirs(model_dir)
-            
-        # Filename now includes the model type
-        self.model_path = os.path.join(model_dir, f'energy_model_{self.model_type}.pkl')
-        
         # Read the data
         self.data = pd.read_csv(energy_file_path)
 
@@ -44,21 +48,10 @@ class EnergyEstimator:
         self.FEATURES = ['num_layers', 'training_hours', 'flops_per_hour']
         self.TARGET = 'energy_kwh'
 
-        # --- Model Selection ---
-        if self.model_type == "RandomForest":
-            self.model = RandomForestRegressor(n_estimators=100, random_state=42)
-        elif self.model_type == "LinearRegression":
-            self.model = LinearRegression()
-        else:
-            raise ValueError("model_type must be 'RandomForest' or 'LinearRegression'")
-            
+        self.anomaly_contamination = anomaly_contamination
         # --- Anomaly Detection Model ---
         self.anomaly_model = IsolationForest(contamination=anomaly_contamination, random_state=42)
         
-        # Transformers
-        self.scaler_X = pp.MinMaxScaler()
-        self.scaler_y = pp.MinMaxScaler()
-
         # State storage
         self.metrics = {}
         self.is_trained = False
@@ -68,6 +61,14 @@ class EnergyEstimator:
         self.latest_prediction = None
         self.latest_layers = None
 
+        # Define Model Directory and Dynamic Filename
+        model_dir = os.path.join(project_root, "model", 'energy_predictor')
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+
+        # Filename now includes the model type
+        self.model_path = os.path.join(model_dir, f'energy_model_{self.model_type}.pkl')
+        
         # --- Smart Load/Train Logic ---
         if os.path.exists(self.model_path):
             self.load_model(self.model_path)
