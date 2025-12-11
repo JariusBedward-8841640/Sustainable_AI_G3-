@@ -1,12 +1,16 @@
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor, IsolationForest
+
+import matplotlib.pyplot as plt
+
+from typing import List, Dict, Union
+
 import sklearn.preprocessing as pp
+from sklearn.ensemble import RandomForestRegressor, IsolationForest
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.pyplot as plt
-from typing import List, Dict, Union
+
 import os
 import sys
 import joblib
@@ -39,7 +43,6 @@ class EnergyEstimator:
         self.model_type = model_type
         
         # Join it with the filepath and the filename to get the absolute path
-        features_file_path = os.path.join(project_root, "data", "processed", 'features_df.csv')
         energy_file_path = os.path.join(project_root, "data", "synthetic", 'energy_dataset.csv')
         # Read the data
         self.data = pd.read_csv(energy_file_path)
@@ -55,7 +58,6 @@ class EnergyEstimator:
         # State storage
         self.metrics = {}
         self.is_trained = False
-        self.feature_names = []
         
         # --- Initialize prediction state variables ---
         self.latest_prediction = None
@@ -74,7 +76,7 @@ class EnergyEstimator:
             self.load_model(self.model_path)
         else:
             print(f"No existing model found for {self.model_type}. Training new model...")
-            self.train(self.data, self.FEATURES, self.TARGET)
+            self.train()
             self.save_model(self.model_path)
 
     def estimate(self, prompt_text, layers, training_hours, flops_str):
@@ -118,15 +120,14 @@ class EnergyEstimator:
             "predicted_val": predicted_energy 
         }
     
-    def preprocess_and_split(self, df: pd.DataFrame, feature_cols: List[str], target_col: str):
-        self.feature_names = feature_cols
+    def preprocess_and_split(self):
         
-        missing_cols = [c for c in feature_cols if c not in df.columns]
+        missing_cols = [c for c in self.FEATURES if c not in self.data.columns]
         if missing_cols:
             raise ValueError(f"Missing columns: {missing_cols}")
 
-        X = df[feature_cols].values
-        y = df[target_col].values.reshape(-1, 1)
+        X = self.data[self.FEATURES].values
+        y = self.data[self.TARGET].values.reshape(-1, 1)
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=42
@@ -141,12 +142,14 @@ class EnergyEstimator:
 
         return (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled)
 
-    def train(self, df: pd.DataFrame, feature_cols: List[str], target_col: str):
+    def train(self):
         print(f"--- Starting Training ({self.model_type}) ---")
         
-        (X_train, y_train), (X_test, y_test) = self.preprocess_and_split(df, feature_cols, target_col)
+        (X_train, y_train), (X_test, y_test) = self.preprocess_and_split()
 
-        self.model.fit(X_train, y_train.ravel())
+        # Flatten y_train for sklearn
+        # ravel is used to convert a multi-dimensional array into a one-dimensional (1D) array.
+        self.model.fit(X_train, y_train.ravel())  
         self.anomaly_model.fit(X_train)
         
         self.is_trained = True
@@ -169,15 +172,16 @@ class EnergyEstimator:
 
     def _prepare_input(self, input_data: dict) -> np.array:
         try:
-            raw_values = [input_data[f] for f in self.feature_names]
+            raw_values = [input_data[f] for f in self.FEATURES]
         except KeyError as e:
             raise ValueError(f"Input is missing feature: {e}")
         return np.array([raw_values])
 
     def predict_energy(self, input_data: dict) -> float:
         if not self.is_trained:
-            raise ValueError("Model not trained.")
-        
+            raise ValueError("Model not trained (in predict_energy function).")
+        if not input_data:
+            raise ValueError("Input data is empty (in predict_energy function).")
         input_array = self._prepare_input(input_data)
         X_scaled = self.scaler_X.transform(input_array)
         pred_scaled = self.model.predict(X_scaled)
@@ -186,7 +190,9 @@ class EnergyEstimator:
 
     def detect_anomaly(self, input_data: dict) -> Dict[str, Union[bool, str]]:
         if not self.is_trained:
-            raise ValueError("Model not trained.")
+            raise ValueError("Model not trained (in detect_anomaly function).")
+        if not input_data:
+            raise ValueError("Input data is empty (in detect_anomaly function).")
             
         input_array = self._prepare_input(input_data)
         X_scaled = self.scaler_X.transform(input_array)
@@ -211,7 +217,7 @@ class EnergyEstimator:
             "anomaly_model": self.anomaly_model,
             "scaler_X": self.scaler_X,
             "scaler_y": self.scaler_y,
-            "feature_names": self.feature_names,
+            "FEATURES": self.FEATURES,
             "metrics": self.metrics,
             "model_type": self.model_type
         }
@@ -228,7 +234,7 @@ class EnergyEstimator:
         self.anomaly_model = artifact["anomaly_model"]
         self.scaler_X = artifact["scaler_X"]
         self.scaler_y = artifact["scaler_y"]
-        self.feature_names = artifact["feature_names"]
+        self.FEATURES = artifact["FEATURES"]
         self.metrics = artifact["metrics"]
         self.model_type = artifact["model_type"]
         self.is_trained = True
@@ -242,9 +248,7 @@ class EnergyEstimator:
 
         # --- Retrieve or reconstruct actual+predicted values ---
         if not hasattr(self, "y_test_real"):
-            (X_scaled, y_scaled), _ = self.preprocess_and_split(
-                self.data, self.feature_names, target_col
-            )
+            (X_scaled, y_scaled), _ = self.preprocess_and_split()
             preds_scaled = self.model.predict(X_scaled)
 
             y_real = self.scaler_y.inverse_transform(y_scaled).flatten()
