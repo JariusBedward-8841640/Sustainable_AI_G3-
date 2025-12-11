@@ -32,7 +32,7 @@ class EnergyEstimator:
         self.scaler_X = pp.MinMaxScaler()
         self.scaler_y = pp.MinMaxScaler()
 
-        # --- Model Selection ---
+        # Model Selection
         if model_type == "RandomForest":
             self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         elif model_type == "LinearRegression":
@@ -52,16 +52,15 @@ class EnergyEstimator:
         self.TARGET = 'energy_kwh'
 
         self.anomaly_contamination = anomaly_contamination
-        # --- Anomaly Detection Model ---
+        # Anomaly Detection Model
         self.anomaly_model = IsolationForest(contamination=anomaly_contamination, random_state=42)
         
         # State storage
         self.metrics = {}
         self.is_trained = False
         
-        # --- Initialize prediction state variables ---
+        # Initialize prediction state variables
         self.latest_prediction = None
-        self.latest_layers = None
 
         # Define Model Directory and Dynamic Filename
         model_dir = os.path.join(project_root, "model", 'energy_predictor')
@@ -71,7 +70,7 @@ class EnergyEstimator:
         # Filename now includes the model type
         self.model_path = os.path.join(model_dir, f'energy_model_{self.model_type}.pkl')
         
-        # --- Smart Load/Train Logic ---
+        # Smart Load/Train Logic
         if os.path.exists(self.model_path):
             self.load_model(self.model_path)
         else:
@@ -99,12 +98,14 @@ class EnergyEstimator:
         })
 
         # Get raw prediction
-        predicted_energy = self.predict_energy(input_data.iloc[0].to_dict())
+        param = input_data.iloc[0].to_dict()
+        print(f"--------------- Input Parameters for Prediction: {param} ---------------")
+        predicted_energy = self.predict_energy(param)
+        print(f"-----------------Predicted Energy (kWh): {predicted_energy}-------------------")
         predicted_energy = max(0.1, predicted_energy)
         
-        # --- Save prediction to instance variables for plotting ---
+        # Save prediction to instance variables for plotting
         self.latest_prediction = predicted_energy
-        self.latest_layers = layers
 
         suggestion = "✅ Optimized."
         if predicted_energy > 50:
@@ -129,9 +130,7 @@ class EnergyEstimator:
         X = self.data[self.FEATURES].values
         y = self.data[self.TARGET].values.reshape(-1, 1)
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=self.test_size, random_state=42
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=42)
 
         # Scale Data
         X_train_scaled = self.scaler_X.fit_transform(X_train)
@@ -203,7 +202,6 @@ class EnergyEstimator:
             "status": "ANOMALY DETECTED" if prediction == -1 else "Normal Operation"
         }
     
-    # --- Persistence Methods ---
     def save_model(self, file_path: str = None):
         """Saves the entire state."""
         if not self.is_trained:
@@ -240,13 +238,14 @@ class EnergyEstimator:
         self.is_trained = True
         print(f"Model loaded from {filename}")    
 
-    def get_training_plot(self, num_points: int = None):
+    def get_training_plot(self, layers: int = None):
         if not self.is_trained:
             raise ValueError("Model not trained.")
+        
+        if layers is None:
+            raise ValueError("Number of layers must be provided for plotting.")
 
-        target_col = "energy_kwh"
-
-        # --- Retrieve or reconstruct actual+predicted values ---
+        # Retrieve or reconstruct actual+predicted values
         if not hasattr(self, "y_test_real"):
             (X_scaled, y_scaled), _ = self.preprocess_and_split()
             preds_scaled = self.model.predict(X_scaled)
@@ -258,14 +257,14 @@ class EnergyEstimator:
             preds_real = self.preds_real
 
         # Slice for plotting
-        if num_points is not None:
-            limit = min(num_points, len(y_real))
-            y_real = y_real[:limit]
-            preds_real = preds_real[:limit]
+        num_points = round(layers * 1.5)
+        limit = min(num_points, len(y_real))
+        y_real = y_real[:limit]
+        preds_real = preds_real[:limit]
 
         x = np.arange(1, len(y_real) + 1)
 
-        # --- Create Plot ---
+        # Create Plot
         fig, ax = plt.subplots(figsize=(10, 6))
 
         ax.plot(x, y_real, label="Actual", color="#1f77b4", marker="o")
@@ -275,9 +274,9 @@ class EnergyEstimator:
         # --------------------------------------------------------
         #              HIGHLIGHT THE LATEST PREDICTION
         # --------------------------------------------------------
-        if self.latest_layers is not None and self.latest_prediction is not None:
-            lx = self.latest_layers          # number of layers
-            ly = self.latest_prediction      # predicted kWh
+        if self.latest_prediction is not None:
+            lx = layers                    # number of layers
+            ly = self.latest_prediction    # predicted kWh
 
             # Convert "layers" to correct x-location.
             # If your x-axis is layers, use lx directly.
@@ -293,7 +292,7 @@ class EnergyEstimator:
             # Horizontal line
             ax.hlines(
                 ly, xmin=1, xmax=x_pred,
-                colors="orange", linewidth=2, zorder=5
+                colors="cyan", linewidth=2, zorder=5
             )
 
             # Marker (diamond)
@@ -301,9 +300,9 @@ class EnergyEstimator:
                 x_pred, ly,
                 s=120, marker="D",
                 facecolor="cyan",
-                edgecolor="orange",
-                linewidth=2,
-                zorder=10
+                edgecolor="black",
+                linewidth=1,
+                zorder=5
             )
 
             # Text bubble
