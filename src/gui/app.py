@@ -5,6 +5,19 @@ import plotly.graph_objects as go
 import os
 import sys
 
+from layout import (
+    sidebar_inputs,
+    input_prompt_view,
+    render_initial_analysis,
+    render_training_plot,
+    optimization_metrics,
+    token_reduction_plot,
+    quality_gauge_plot,
+    energy_impact_visualization,
+    prompt_comparison,
+    footer
+)
+
 # --- PATH SETUP ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, '../..'))
@@ -20,20 +33,19 @@ data_logger = DataLogger(db_type="sqlite")
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Sustainable AI", layout="wide")
-st.title("🌱 Sustainable AI - Energy Predictor")
-st.markdown("### Transparency & Efficiency in Generative AI")
+st.title("🌱 Sustainable AI")
+st.markdown("### Transparency and Energy-Efficient Prompt/Context Engineering")
 
 # --- SESSION STATE ---
 if 'step' not in st.session_state:
     st.session_state['step'] = 0 
 if 'original_results' not in st.session_state:
     st.session_state['original_results'] = {}
-if 'improved_results' not in st.session_state:
-    st.session_state['improved_results'] = {}
 if 'optimized_results' not in st.session_state:
     st.session_state['optimized_results'] = {}
 if 'optimization_analysis' not in st.session_state:
     st.session_state['optimization_analysis'] = {}
+    
 # Store pending toast messages for display after reruns
 if 'toast_message' not in st.session_state:
     st.session_state['toast_message'] = None
@@ -46,18 +58,10 @@ if st.session_state['toast_message']:
     st.session_state['toast_message'] = None
 
 # --- SIDEBAR (INPUTS) ---
-with st.sidebar:
-    st.header("Model Architecture")
-    layers = st.number_input("Number of Layers", min_value=1, max_value=200, value=12)
-    training_time = st.number_input("Training Time (Hours)", min_value=0.1, value=5.0)
-    flops_input = st.text_input("FLOPs (e.g. 1.5e18)", value="1.5e18")
+model_type, layers, training_time, flops_input = sidebar_inputs()
 
-    # Add dropdown for model type
-    model_type = st.selectbox("Select Model Type", options=["RandomForest", "LinearRegression"], index=1)
-    
-    st.markdown("---")
-    st.info(f"ℹ️ Uses {model_type} on synthetic training data.")
-    
+# Add NLP Model Info to sidebar
+with st.sidebar:
     # NLP Model Info
     st.markdown("---")
     st.markdown("#### 🧠 NLP Optimization")
@@ -89,8 +93,7 @@ pip install transformers sentencepiece""", language="bash")
         st.caption(f"T5 check failed: {str(e)[:50]}")
 
 # --- MAIN AREA ---
-st.subheader("Enter Prompt Context")
-prompt_text = st.text_area("Input Prompt:", height=100, placeholder="Enter your prompt here...")
+prompt_text = input_prompt_view()
 
 # --- LOGIC FLOW ---
 
@@ -143,24 +146,14 @@ if st.button("🚀 Analyze Consumption", type="primary"):
             
             st.session_state['step'] = 1
             
-        st.toast('Analysis Complete!', icon='⚡')
+        st.toast('Initial Analysis Complete!', icon='⚡')
 
 # --- VIEW: ANALYSIS RESULTS ---
 if st.session_state['step'] >= 1:
-    st.divider()
-    st.subheader("📊 Analysis Report")
-    
-    res = st.session_state['original_results']
-    opt = st.session_state.get('optimization_analysis', {})
-    
-    # --- ENERGY METRICS ---
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Predicted Energy", f"{res['energy_kwh']} kWh")
-    col2.metric("Carbon Footprint", f"{res['carbon_kg']} kgCO2")
-    col3.metric("Original Tokens", opt.get('original_tokens', res['token_count']))
-    col4.metric("Optimized Tokens", opt.get('optimized_tokens', '-'))
-    
-    st.info("**Message: ✅ Initial analysis complete.**")
+    render_initial_analysis(
+        st.session_state['original_results'], 
+        st.session_state.get('optimization_analysis', {}) 
+    )
 
     # --- SHOW ENERGY PERFORMANCE GRAPH ---
     st.markdown("#### Initial Model Performance")
@@ -177,6 +170,9 @@ if st.session_state['step'] >= 1:
     # =================================================================
     st.subheader("🧠 Prompt Optimization Analysis")
     st.markdown("*AI-powered prompt optimization using T5 transformer model*")
+
+    res_original = st.session_state['original_results']
+    opt = st.session_state.get('optimization_analysis', {})
     
     # Get optimized results
     opt_res = st.session_state.get('optimized_results', {})
@@ -187,12 +183,12 @@ if st.session_state['step'] >= 1:
     e1, e2, e3, e4 = st.columns(4)
     
     # Calculate actual savings
-    orig_energy = float(res['energy_kwh'])
+    orig_energy = float(st.session_state['original_results']['energy_kwh'])
     opt_energy_val = float(opt_res.get('energy_kwh', orig_energy))
     energy_saved = orig_energy - opt_energy_val
     energy_saved_pct = (energy_saved / orig_energy * 100) if orig_energy > 0 else 0
     
-    orig_carbon = float(res['carbon_kg'])
+    orig_carbon = float(st.session_state['original_results']['carbon_kg'])
     opt_carbon_val = float(opt_res.get('carbon_kg', orig_carbon))
     carbon_saved = orig_carbon - opt_carbon_val
     
@@ -333,7 +329,7 @@ if st.session_state['step'] >= 1:
     
     with energy_col1:
         # Use actual energy values from estimator
-        actual_orig_energy = float(res['energy_kwh'])
+        actual_orig_energy = float(st.session_state['original_results']['energy_kwh'])
         actual_opt_energy = float(opt_res.get('energy_kwh', actual_orig_energy))
         actual_energy_saved = max(0, actual_orig_energy - actual_opt_energy)
         
@@ -355,7 +351,7 @@ if st.session_state['step'] >= 1:
     
     with energy_col2:
         # Carbon footprint comparison using actual values
-        actual_orig_carbon = float(res['carbon_kg'])
+        actual_orig_carbon = float(st.session_state['original_results']['carbon_kg'])
         actual_opt_carbon = float(opt_res.get('carbon_kg', actual_orig_carbon))
         
         fig_carbon = go.Figure()
@@ -401,15 +397,11 @@ if st.session_state['step'] == 1:
             # 1. Get optimized prompt
             opt = st.session_state.get('optimization_analysis', {})
             better_prompt = opt.get('optimized', st.session_state['prompt'])
-            
-            # 2. Estimate with "Improved" architecture inputs
-            improved_layers = int(layers * 0.8) if layers > 1 else 1
-            improved_time = training_time * 0.8
-            
+
             estimator = EnergyEstimator(model_type=model_type)
-            new_results = estimator.estimate(better_prompt, improved_layers, improved_time, flops_input)
+            new_results = estimator.estimate(better_prompt, layers, training_time, flops_input)
             
-            st.session_state['improved_results'] = new_results
+            st.session_state['optimized_results'] = new_results
             st.session_state['better_prompt'] = better_prompt
             st.session_state['step'] = 2
             
@@ -422,7 +414,7 @@ if st.session_state['step'] == 2:
     st.success("**System Status:** ✅ Fully Optimized (Prompt + Architecture)")
     
     orig = st.session_state['original_results']
-    new = st.session_state['improved_results']
+    new = st.session_state['optimized_results']
     opt = st.session_state.get('optimization_analysis', {})
     
     saved_energy = orig['energy_kwh'] - new['energy_kwh']
@@ -497,20 +489,17 @@ if st.session_state['step'] == 2:
     
     with st.expander("📉 View Optimized Performance Graph", expanded=True):
         estimator = EnergyEstimator(model_type=model_type)
-        results = estimator.estimate(st.session_state['better_prompt'], improved_layers, improved_time, flops_input)
-        fig = estimator.get_training_plot(improved_layers)
+        results = estimator.estimate(st.session_state['better_prompt'], layers, training_time, flops_input)
+        fig = estimator.get_training_plot(layers)
         st.pyplot(fig)
     
     # Reset button
     if st.button("🔄 Reset Analysis"):
         st.session_state['step'] = 0
         st.session_state['original_results'] = {}
-        st.session_state['improved_results'] = {}
+        st.session_state['optimized_results'] = {}
         st.session_state['optimization_analysis'] = {}
         st.session_state['toast_message'] = ('System Reset.', '🔄')
         st.rerun()
-
-# --- FOOTER ---
-st.markdown("---")
-st.caption("🌱 Sustainable AI - Transparency & Energy-Efficient Prompt Engineering with Machine Learning")
-st.caption("NLP Module: T5-based prompt optimization with semantic similarity validation")
+# FOOTER
+footer()
