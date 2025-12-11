@@ -58,9 +58,6 @@ class EnergyEstimator:
         # State storage
         self.metrics = {}
         self.is_trained = False
-        
-        # Initialize prediction state variables
-        self.latest_prediction = None
 
         # Define Model Directory and Dynamic Filename
         model_dir = os.path.join(project_root, "model", 'energy_predictor')
@@ -99,13 +96,8 @@ class EnergyEstimator:
 
         # Get raw prediction
         param = input_data.iloc[0].to_dict()
-        print(f"--------------- Input Parameters for Prediction: {param} ---------------")
         predicted_energy = self.predict_energy(param)
-        print(f"-----------------Predicted Energy (kWh): {predicted_energy}-------------------")
         predicted_energy = max(0.1, predicted_energy)
-        
-        # Save prediction to instance variables for plotting
-        self.latest_prediction = predicted_energy
 
         suggestion = "✅ Optimized."
         if predicted_energy > 50:
@@ -238,7 +230,7 @@ class EnergyEstimator:
         self.is_trained = True
         print(f"Model loaded from {filename}")    
 
-    def get_training_plot(self, layers: int = None):
+    def get_training_plot(self, layers: int = None, predicted_energy: float = None):
         if not self.is_trained:
             raise ValueError("Model not trained.")
         
@@ -274,46 +266,45 @@ class EnergyEstimator:
         # --------------------------------------------------------
         #              HIGHLIGHT THE LATEST PREDICTION
         # --------------------------------------------------------
-        if self.latest_prediction is not None:
-            lx = layers                    # number of layers
-            ly = self.latest_prediction    # predicted kWh
+        lx = layers              # number of layers
+        ly = predicted_energy    # predicted kWh
 
-            # Convert "layers" to correct x-location.
-            # If your x-axis is layers, use lx directly.
-            # If your x-axis is sample index, then:
-            x_pred = lx
+        # Convert "layers" to correct x-location.
+        # If your x-axis is layers, use lx directly.
+        # If your x-axis is sample index, then:
+        x_pred = lx
 
-            # Vertical line
-            ax.vlines(
-                x_pred, ymin=0, ymax=ly,
-                colors="cyan", linewidth=2, zorder=5
-            )
+        # Vertical line
+        ax.vlines(
+            x_pred, ymin=0, ymax=ly,
+            colors="cyan", linewidth=2, zorder=5
+        )
 
-            # Horizontal line
-            ax.hlines(
-                ly, xmin=1, xmax=x_pred,
-                colors="cyan", linewidth=2, zorder=5
-            )
+        # Horizontal line
+        ax.hlines(
+            ly, xmin=1, xmax=x_pred,
+            colors="cyan", linewidth=2, zorder=5
+        )
 
-            # Marker (diamond)
-            ax.scatter(
-                x_pred, ly,
-                s=120, marker="D",
-                facecolor="cyan",
-                edgecolor="black",
-                linewidth=1,
-                zorder=5
-            )
+        # Marker (diamond)
+        ax.scatter(
+            x_pred, ly,
+            s=120, marker="D",
+            facecolor="cyan",
+            edgecolor="black",
+            linewidth=1,
+            zorder=5
+        )
 
-            # Text bubble
-            ax.annotate(
-                "Prediction",
-                xy=(x_pred, ly),
-                xytext=(x_pred + 0.8, ly + 0.8),
-                bbox=dict(boxstyle="round,pad=0.4", fc="cyan"),
-                arrowprops=dict(arrowstyle="->"),
-                zorder=11
-            )
+        # Text bubble
+        ax.annotate(
+            "Prediction",
+            xy=(x_pred, ly),
+            xytext=(x_pred + 0.8, ly + 0.8),
+            bbox=dict(boxstyle="round,pad=0.4", fc="cyan"),
+            arrowprops=dict(arrowstyle="->"),
+            zorder=11
+        )
 
         # Axis settings
         ax.set_title(f"Energy Prediction vs Actual ({self.model_type})")

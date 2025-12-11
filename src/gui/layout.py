@@ -185,6 +185,17 @@ def prompt_comparison(original_prompt, opt_data):
         st.markdown("**🌱 Optimized Prompt**")
         st.code(opt_data.get("optimized", original_prompt), language="text")
 
+# -------------------------------------
+# RESET BUTTON
+# -------------------------------------
+def reset_button_function():
+    st.session_state['step'] = 0
+    st.session_state['original_results'] = {}
+    st.session_state['optimized_results'] = {}
+    st.session_state['optimization_analysis'] = {}
+    st.session_state['toast_message'] = ('System Reset.', '🔄')
+    st.rerun()
+
 
 # -------------------------------------
 # FOOTER
