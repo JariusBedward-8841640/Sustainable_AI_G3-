@@ -78,10 +78,36 @@ class PromptSimplifier:
             from src.nlp.nlp_service import NLPService
             self._nlp_service = NLPService()
             self._ml_initialized = True
-            print("PromptSimplifier: Using T5 ML model for optimization")
+            
+            # Get T5 status
+            self._t5_status = self._nlp_service.get_optimizer_status()
+            if self._t5_status.get("t5_available"):
+                print("PromptSimplifier: Using T5 ML model for optimization")
+            else:
+                print(f"PromptSimplifier: T5 unavailable, using enhanced rule-based optimization")
         except Exception as e:
             print(f"PromptSimplifier: ML model not available ({e}), using rule-based fallback")
             self._ml_initialized = False
+            self._t5_status = {"t5_available": False, "using_fallback": True, "status_message": str(e)}
+    
+    def get_model_status(self) -> dict:
+        """
+        Get the current status of the optimization model.
+        
+        Returns:
+            Dictionary with model availability and status info
+        """
+        if hasattr(self, '_t5_status'):
+            return self._t5_status
+        return {
+            "t5_available": False,
+            "using_fallback": True,
+            "status_message": "Using rule-based optimization only"
+        }
+    
+    def is_ml_available(self) -> bool:
+        """Check if ML model is available."""
+        return self._ml_initialized and hasattr(self, '_nlp_service') and self._nlp_service is not None
     
     def optimize(self, text: str) -> str:
         """

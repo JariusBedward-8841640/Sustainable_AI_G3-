@@ -61,6 +61,38 @@ if st.session_state['toast_message']:
 # --- SIDEBAR (INPUTS) ---
 model_type, layers, training_time, flops_input = sidebar_inputs()
 
+# Add NLP Model Info to sidebar
+with st.sidebar:
+    # NLP Model Info
+    st.markdown("---")
+    st.markdown("#### 🧠 NLP Optimization")
+    
+    # Check T5 status and display to user
+    try:
+        simplifier_check = PromptSimplifier(use_ml_model=True)
+        model_status = simplifier_check.get_model_status()
+        
+        if model_status.get("t5_available"):
+            is_trained = model_status.get("is_trained", False)
+            if is_trained:
+                st.success("✅ T5 Fine-tuned Model Active")
+                st.caption("Using trained prompt optimization model")
+            else:
+                st.info("ℹ️ T5 Base Model Active")
+                st.caption("Using base T5 + rules (not fine-tuned)")
+                with st.expander("🔧 Fine-tune for better results"):
+                    st.markdown("Run training to improve accuracy:")
+                    st.code("python scripts/train_t5_model.py --epochs 10", language="bash")
+        else:
+            st.warning("⚠️ Rule-Based Mode")
+            st.caption("T5 unavailable - using rule-based optimization")
+            with st.expander("Setup T5 Model"):
+                st.code("""pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install transformers sentencepiece""", language="bash")
+    except Exception as e:
+        st.info("ℹ️ Using rule-based optimization")
+        st.caption(f"T5 check failed: {str(e)[:50]}")
+
 # --- MAIN AREA ---
 prompt_text = input_prompt_view()
 

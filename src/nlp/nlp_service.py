@@ -90,7 +90,22 @@ class NLPService:
         self.validator = EnhancedPromptValidator()
         self.complexity = ComplexityAnalyzer()
         
-        print("NLP Service initialized successfully.")
+        # Store T5 status for external access
+        self.t5_status = self.optimizer.get_status()
+        
+        if self.t5_status["t5_available"]:
+            print(f"NLP Service initialized with T5 model ({self.t5_status['device']})")
+        else:
+            print(f"⚠️ NLP Service initialized (T5 unavailable - using rule-based fallback)")
+        
+    def get_optimizer_status(self) -> dict:
+        """
+        Get the current status of the T5 optimizer.
+        
+        Returns:
+            Dictionary with t5_available, is_trained, device, and status_message
+        """
+        return self.optimizer.get_status()
         
     def optimize_prompt(self, prompt: str) -> ComprehensiveOptimizationResult:
         """
