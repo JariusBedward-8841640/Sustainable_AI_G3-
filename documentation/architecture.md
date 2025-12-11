@@ -106,14 +106,67 @@ Sustainable_AI_G3-/
 
 **File:** `src/nlp/prompt_optimizer.py`
 
-**Purpose:** Core T5-based prompt optimization engine
+**Purpose:** Core T5-based prompt optimization engine with advanced rule-based transformations
 
-**Model:** T5-small (fine-tunable)
+**Model:** T5-small (fine-tunable, 60M parameters, CPU-optimized)
+
+**5-Phase Optimization Pipeline:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    OPTIMIZATION PIPELINE                        │
+├─────────────────────────────────────────────────────────────────┤
+│ Phase 0   │ Duplicate Content Detection                         │
+│           │ - Removes copy-pasted/repeated text                 │
+│           │ - Finds repeating patterns (80%+ coverage)          │
+│           │ - Deduplicates identical sentences                  │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 0.5 │ JSON-Loaded Word Replacements                       │
+│           │ - 103 verbose phrases → concise equivalents         │
+│           │ - 30 word simplifications (utilize → use)           │
+│           │ - 30 redundant phrase fixes                         │
+│           │ - Configurable via word_replacements.json           │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 1   │ Energy-Intensive Feature Removal                    │
+│           │ - Formatting requests (JSON, Markdown, HTML)        │
+│           │ - Syntax highlighting requests                      │
+│           │ - List/header formatting requests                   │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 2   │ Verbose-to-Concise Transformations                  │
+│           │ - "Could you please help me" → ""                   │
+│           │ - "I was wondering if" → ""                         │
+│           │ - Rhetorical tag removal (", right?")               │
+│           │ - Em-dash expansion condensation                    │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 3   │ Filler & Politeness Removal                         │
+│           │ - Filler words (basically, actually, literally)     │
+│           │ - Intensifiers (really, very, just)                 │
+│           │ - Politeness markers (please, kindly, thanks)       │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 4   │ Passive to Active Voice Conversion                  │
+│           │ - "It was requested that you" → ""                  │
+│           │ - "It would be appreciated if" → ""                 │
+├───────────┼─────────────────────────────────────────────────────┤
+│ Phase 5   │ Multi-Pass Cleanup                                  │
+│           │ - Article agreement (a → an before vowels)          │
+│           │ - Sentence capitalization                           │
+│           │ - Orphaned fragment removal                         │
+│           │ - Punctuation normalization                         │
+└───────────┴─────────────────────────────────────────────────────┘
+```
+
+**Configuration Files:**
+
+| File | Purpose |
+|------|---------|
+| `model/prompt_optimizer/word_replacements.json` | Verbose phrases, word simplifications, filler words, redundant phrases |
 
 **Features:**
 
 - Tokenization and optimization
 - Batch processing
+- Duplicate content detection
+- JSON-configurable word replacements
 - Fallback optimization
 - Training capabilities
 
@@ -122,6 +175,7 @@ Sustainable_AI_G3-/
 - Token reduction percentage
 - Energy reduction estimate
 - Semantic similarity preservation
+- Changes made (detailed list)
 
 #### 2.3 Semantic Similarity
 

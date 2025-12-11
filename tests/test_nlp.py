@@ -284,19 +284,19 @@ class TestPromptOptimizerOptimization(unittest.TestCase):
             
     def test_optimize_empty(self):
         """Test optimization of empty string."""
-        result = self.optimizer.optimize("")
+        result, changes = self.optimizer.optimize("")
         self.assertEqual(result, "")
         
     def test_optimize_short_prompt(self):
         """Test optimization of short prompt (5 tokens)."""
-        result = self.optimizer.optimize("Write code")
+        result, changes = self.optimizer.optimize("Write code")
         self.assertIsNotNone(result)
         self.assertGreater(len(result), 0)
         
     def test_optimize_medium_prompt(self):
         """Test optimization of medium prompt (~50 tokens)."""
         prompt = "Could you please help me understand how machine learning algorithms work and how they can be applied to solve real-world problems?"
-        result = self.optimizer.optimize(prompt)
+        result, changes = self.optimizer.optimize(prompt)
         self.assertIsNotNone(result)
         self.assertGreater(len(result), 0)
         
@@ -308,14 +308,14 @@ class TestPromptOptimizerOptimization(unittest.TestCase):
         of computer vision applications, including the architecture, the 
         convolutional layers, pooling layers, and how backpropagation 
         works to train these networks on image classification tasks."""
-        result = self.optimizer.optimize(prompt)
+        result, changes = self.optimizer.optimize(prompt)
         self.assertIsNotNone(result)
         self.assertGreater(len(result), 0)
         
     def test_optimize_preserves_meaning(self):
         """Test that optimization preserves core meaning."""
         prompt = "Explain Python functions"
-        result = self.optimizer.optimize(prompt)
+        result, changes = self.optimizer.optimize(prompt)
         # Should contain at least one key word
         self.assertTrue(
             any(word in result.lower() for word in ['python', 'function', 'explain'])
@@ -342,7 +342,7 @@ class TestPromptOptimizerOptimization(unittest.TestCase):
     def test_fallback_optimize(self):
         """Test fallback optimization method."""
         prompt = "Could you please kindly help me understand"
-        result = self.optimizer._fallback_optimize(prompt)
+        result, changes = self.optimizer._fallback_optimize(prompt)
         self.assertNotIn("please", result.lower())
         self.assertNotIn("kindly", result.lower())
         

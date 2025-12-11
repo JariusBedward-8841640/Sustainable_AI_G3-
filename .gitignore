@@ -35,3 +35,10 @@ logs/
 
 # Optional: shell scripts (if you don’t want to version run.sh)
 run.sh
+
+# Fine-tuned models (large files ~230MB)
+model/prompt_optimizer/t5_finetuned/
+model/prompt_optimizer/t5_finetuned/checkpoint-*/
+*.safetensors
+*.bin
+!requirements*.txt

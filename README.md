@@ -35,6 +35,76 @@ This project addresses the critical environmental impact of the rapid expansion 
 
     - pip install -r requirements.txt
 
+## 🤖 T5 Model Setup
+
+The prompt optimizer uses a **fine-tuned T5-small transformer model** for intelligent optimization. The system includes both a fine-tuned model and rule-based fallback.
+
+### Option 1: Use Pre-trained Model (Recommended)
+
+If the fine-tuned model is included in the distribution (`model/prompt_optimizer/t5_finetuned/`), it will load automatically. No additional setup needed!
+
+### Option 2: Train Your Own Model
+
+If you need to train the model (or retrain with custom data):
+
+```bash
+# 1. Install all dependencies
+pip install -r requirements.txt
+
+# 2. Install T5 training dependencies
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install transformers sentencepiece
+pip install tf-keras accelerate
+
+# 3. Run the training script (takes ~25 minutes on CPU)
+python scripts/train_t5_model.py --epochs 10 --batch-size 4
+
+# The model will be saved to: model/prompt_optimizer/t5_finetuned/
+```
+
+**Training Options:**
+- `--epochs N` - Number of training epochs (default: 10)
+- `--batch-size N` - Batch size (default: 8, use 4 for low memory)
+- `--learning-rate N` - Learning rate (default: 0.0003)
+
+**Training Data:**
+The training data is in `model/prompt_optimizer/training_data.json`. You can add more examples following the format:
+```json
+{
+  "original": "Could you please help me...",
+  "optimized": "Help me..."
+}
+```
+
+### Option 3: Install Base T5 (No Fine-tuning)
+
+If you just want to use the base T5 model without fine-tuning:
+
+```bash
+# For CPU-only:
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install transformers sentencepiece
+
+# For GPU support (if you have CUDA):
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+pip install transformers sentencepiece
+```
+
+### Verify T5 Installation:
+
+```bash
+python -c "from transformers import T5Tokenizer, T5ForConditionalGeneration; print('T5 ready!')"
+```
+
+### Distributing to Others
+
+To share the trained model with teammates:
+1. Train the model using `python scripts/train_t5_model.py`
+2. Include the `model/prompt_optimizer/t5_finetuned/` directory when sharing
+3. The model will load automatically on their machines
+
+**Note:** The application works without T5, using rule-based optimization. The sidebar shows the current mode (T5 Fine-tuned, T5 Base, or Rule-Based).
+
 ## 🎯 How to Run:
 
 1. Clone this repo (git clone <repo-url> cd <repo-folder>)
