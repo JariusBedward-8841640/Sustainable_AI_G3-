@@ -1,3 +1,7 @@
+#### Developer: Mostafa Allahmoradi
+#### Course: CSCN8010 - Machine Learning
+#### Date: December 2025
+
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -48,34 +52,94 @@ def render_initial_analysis(original, optimization):
 
     st.info("**Message: ✅ Initial analysis complete.**")
 
-# -------------------------------------
-# TRAINING PERFORMANCE PLOT
-# -------------------------------------
-def render_training_plot(estimator, layers):
-    st.markdown("#### Initial Model Performance")
-    with st.expander("📈 View Energy Performance Graph", expanded=True):
-        fig = estimator.get_training_plot(layers)
-        st.pyplot(fig)
-
 
 # -------------------------------------
 # OPTIMIZATION METRICS (energy, carbon, tokens)
 # -------------------------------------
-def optimization_metrics(original, opt_results, opt_data):
+def optimization_metrics(res_optimized, opt):
     st.subheader("🧠 Prompt Optimization Analysis")
-    st.markdown("*AI-powered prompt optimization using T5 transformer model*")
+    st.markdown("*AI-powered prompt optimization using T5 transformer model*")      
 
-    orig_e = float(original['energy_kwh'])
-    opt_e = float(opt_results["energy_kwh"])
-    saved = orig_e - opt_e
-    saved_pct = saved / orig_e * 100 if orig_e else 0
+    # --- Energy & Carbon Metrics for Optimized Prompt ---
+    st.markdown("#### ⚡ Optimized Prompt Energy Metrics")
 
     e1, e2, e3, e4 = st.columns(4)
-    e1.metric("Optimized Energy", f"{opt_e:.4f} kWh")
-    e2.metric("Carbon Reduction", f"{opt_results['carbon_kg']:.4f} kgCO2")
-    e3.metric("Energy Saved", f"{saved_pct:.1f}%")
-    e4.metric("Token Reduction", f"{opt_data.get('token_reduction_pct', 0)}%")
 
+    # Calculate actual savings
+    orig_energy = float(st.session_state['original_results']['energy_kwh'])
+    opt_energy_val = float(res_optimized.get('energy_kwh', orig_energy))
+    energy_saved = orig_energy - opt_energy_val
+    energy_saved_pct = (energy_saved / orig_energy * 100) if orig_energy > 0 else 0
+
+    orig_carbon = float(st.session_state['original_results']['carbon_kg'])
+    opt_carbon_val = float(res_optimized.get('carbon_kg', orig_carbon))
+    carbon_saved = orig_carbon - opt_carbon_val
+
+    e1.metric(
+        "Optimized Energy",
+        f"{opt_energy_val:.4f} kWh",
+        delta=f"-{energy_saved:.4f} kWh" if energy_saved > 0 else "No change",
+        delta_color="inverse" if energy_saved > 0 else "off"
+    )
+    e2.metric(
+        "Optimized Carbon",
+        f"{opt_carbon_val:.4f} kgCO2",
+        delta=f"-{carbon_saved:.4f} kgCO2" if carbon_saved > 0 else "No change",
+        delta_color="inverse" if carbon_saved > 0 else "off"
+    )
+    e3.metric(
+        "Energy Saved",
+        f"{energy_saved_pct:.1f}%",
+        help="Percentage of energy saved using the optimized prompt"
+    )
+    e4.metric(
+        "Carbon Reduction",
+        f"{carbon_saved * 1000:.2f} g CO2",
+        help="Grams of CO2 saved using the optimized prompt"
+    )
+
+    st.markdown("---")
+
+    # --- Optimization Metrics Row ---
+    m1, m2, m3, m4 = st.columns(4)
+
+    token_reduction = opt.get('token_reduction_pct', 0)
+    energy_reduction = opt.get('energy_reduction_pct', 0)
+    semantic_sim = opt.get('semantic_similarity', 0)
+    quality_score = opt.get('quality_score', 0)
+
+    m1.metric(
+        "Token Reduction",
+        f"{token_reduction}%",
+        delta=f"-{opt.get('original_tokens', 0) - opt.get('optimized_tokens', 0)} tokens" if token_reduction > 0 else None,
+        delta_color="inverse"
+    )
+    m2.metric(
+        "Est. Energy Savings",
+        f"{energy_reduction}%",
+        help="Based on transformer attention complexity (O(n²))"
+    )
+    m3.metric(
+        "Semantic Similarity",
+        f"{semantic_sim}%",
+        help="How well the optimized prompt preserves original meaning"
+    )
+    m4.metric(
+        "Quality Score",
+        f"{quality_score}/100",
+        help="Overall optimization quality rating"
+    )
+
+def semantic_validation(opt):
+    st.markdown("#### 🔍 Semantic Validation")
+
+    meaning_preserved = opt.get('meaning_preserved', True)
+    similarity_interp = opt.get('similarity_interpretation', 'N/A')
+
+    if meaning_preserved:
+        st.success(f"✅ **Meaning Preserved:** {similarity_interp}")
+    else:
+        st.warning(f"⚠️ **Review Needed:** {similarity_interp}")
 
 # -------------------------------------
 # TOKEN REDUCTION BAR CHART
@@ -98,19 +162,15 @@ def token_reduction_plot(opt_data):
             height=300,
             showlegend=False
         )
-        st.plotly_chart(fig_tokens, use_container_width=True)
-
-    return col2  # return the right column to draw second chart there
-
-
-# -------------------------------------
-# QUALITY GAUGE PLOT
-# -------------------------------------
-def quality_gauge_plot(col, quality_score):
-    with col:
+        st.plotly_chart(fig_tokens, width='stretch')
+    with col2:
+        quality_score = opt_data.get('quality_score', 0)
+        # Quality Metrics Gauge
         fig_quality = go.Figure(go.Indicator(
             mode="gauge+number+delta",
             value=quality_score,
+            domain={'x': [0, 1], 'y': [0, 1]},
+            title={'text': "Optimization Quality"},
             delta={'reference': 50},
             gauge={
                 'axis': {'range': [0, 100]},
@@ -119,62 +179,82 @@ def quality_gauge_plot(col, quality_score):
                     {'range': [0, 40], 'color': "#FFE66D"},
                     {'range': [40, 70], 'color': "#95E1D3"},
                     {'range': [70, 100], 'color': "#4ECDC4"}
-                ]
+                ],
+                'threshold': {
+                    'line': {'color': "red", 'width': 4},
+                    'thickness': 0.75,
+                    'value': 80
+                }
             }
         ))
         fig_quality.update_layout(height=300)
-        st.plotly_chart(fig_quality, use_container_width=True)
-
+        st.plotly_chart(fig_quality, width='stretch')
 
 # -------------------------------------
 # ENERGY PIE + CARBON BAR CHART
 # -------------------------------------
-def energy_impact_visualization(original, opt_results):
+def energy_impact_visualization(res_optimized):
     st.markdown("#### 📊 Energy Impact Visualization")
 
-    col1, col2 = st.columns(2)
+    energy_col1, energy_col2 = st.columns(2)
 
-    # pie chart
-    with col1:
-        orig_e = float(original['energy_kwh'])
-        opt_e = float(opt_results['energy_kwh'])
-        saved = max(0, orig_e - opt_e)
+    with energy_col1:
+        # Use actual energy values from estimator
+        actual_orig_energy = float(st.session_state['original_results']['energy_kwh'])
+        actual_opt_energy = float(res_optimized.get('energy_kwh', actual_orig_energy))
+        actual_energy_saved = max(0, actual_orig_energy - actual_opt_energy)
 
+        # Energy comparison pie
         fig_energy = go.Figure(data=[go.Pie(
             labels=['Energy Saved', 'Optimized Usage'],
-            values=[saved, opt_e],
+            values=[actual_energy_saved, actual_opt_energy],
             hole=.4,
-            textinfo='label+percent'
+            marker_colors=['#4ECDC4', '#FF6B6B'],
+            textinfo='label+percent',
+            hovertemplate='%{label}: %{value:.4f} kWh<extra></extra>'
         )])
-        fig_energy.update_layout(title="Energy Distribution", height=300)
-        st.plotly_chart(fig_energy, use_container_width=True)
+        fig_energy.update_layout(
+            title="Energy Distribution",
+            height=300,
+            annotations=[dict(text=f'{actual_opt_energy:.4f}<br>kWh', x=0.5, y=0.5, font_size=12, showarrow=False)]
+        )
+        st.plotly_chart(fig_energy, width='stretch')
 
-    # carbon bar chart
-    with col2:
-        orig_c = float(original['carbon_kg'])
-        opt_c = float(opt_results['carbon_kg'])
+    with energy_col2:
+        # Carbon footprint comparison using actual values
+        actual_orig_carbon = float(st.session_state['original_results']['carbon_kg'])
+        actual_opt_carbon = float(res_optimized.get('carbon_kg', actual_orig_carbon))
 
         fig_carbon = go.Figure()
         fig_carbon.add_trace(go.Bar(
             name='Original',
             x=['Energy (kWh)', 'Carbon (g CO2)'],
-            y=[orig_e, orig_c * 1000],
-            marker_color='#FF6B6B'
+            y=[actual_orig_energy, actual_orig_carbon * 1000],
+            marker_color='#FF6B6B',
+            text=[f'{actual_orig_energy:.4f}', f'{actual_orig_carbon * 1000:.2f}'],
+            textposition='auto'
         ))
         fig_carbon.add_trace(go.Bar(
             name='Optimized',
             x=['Energy (kWh)', 'Carbon (g CO2)'],
-            y=[opt_e, opt_c * 1000],
-            marker_color='#4ECDC4'
+            y=[actual_opt_energy, actual_opt_carbon * 1000],
+            marker_color='#4ECDC4',
+            text=[f'{actual_opt_energy:.4f}', f'{actual_opt_carbon * 1000:.2f}'],
+            textposition='auto'
         ))
-        fig_carbon.update_layout(title="Energy & Carbon: Original vs Optimized", height=300, barmode="group")
-        st.plotly_chart(fig_carbon, use_container_width=True)
-
+        fig_carbon.update_layout(
+            title="Energy & Carbon: Original vs Optimized",
+            barmode='group',
+            height=300,
+            legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
+        )
+        st.plotly_chart(fig_carbon, width='stretch')
 
 # -------------------------------------
 # PROMPT COMPARISON
 # -------------------------------------
 def prompt_comparison(original_prompt, opt_data):
+    st.markdown("#### 📝 Prompt Comparison")
     col1, col2 = st.columns(2)
 
     with col1:
@@ -184,7 +264,6 @@ def prompt_comparison(original_prompt, opt_data):
     with col2:
         st.markdown("**🌱 Optimized Prompt**")
         st.code(opt_data.get("optimized", original_prompt), language="text")
-
 
 # -------------------------------------
 # FOOTER

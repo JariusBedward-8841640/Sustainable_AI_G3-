@@ -1,3 +1,7 @@
+#### Developer: Mostafa Allahmoradi
+#### Course: CSCN8010 - Machine Learning
+#### Date: December 2025
+
 import pandas as pd
 import numpy as np
 
@@ -58,9 +62,6 @@ class EnergyEstimator:
         # State storage
         self.metrics = {}
         self.is_trained = False
-        
-        # Initialize prediction state variables
-        self.latest_prediction = None
 
         # Define Model Directory and Dynamic Filename
         model_dir = os.path.join(project_root, "model", 'energy_predictor')
@@ -99,13 +100,8 @@ class EnergyEstimator:
 
         # Get raw prediction
         param = input_data.iloc[0].to_dict()
-        print(f"--------------- Input Parameters for Prediction: {param} ---------------")
         predicted_energy = self.predict_energy(param)
-        print(f"-----------------Predicted Energy (kWh): {predicted_energy}-------------------")
         predicted_energy = max(0.1, predicted_energy)
-        
-        # Save prediction to instance variables for plotting
-        self.latest_prediction = predicted_energy
 
         suggestion = "✅ Optimized."
         if predicted_energy > 50:
@@ -138,6 +134,8 @@ class EnergyEstimator:
 
         X_test_scaled = self.scaler_X.transform(X_test)
         y_test_scaled = self.scaler_y.transform(y_test)
+
+        print(f"Data split into {len(X_train)} training and {len(X_test)} testing samples.")
 
         return (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled)
 
@@ -238,20 +236,27 @@ class EnergyEstimator:
         self.is_trained = True
         print(f"Model loaded from {filename}")    
 
-    def get_training_plot(self, layers: int = None):
+    def get_training_plot(self, layers: int = None, predicted_energy: float = None):
         if not self.is_trained:
             raise ValueError("Model not trained.")
         
         if layers is None:
             raise ValueError("Number of layers must be provided for plotting.")
 
-        # Retrieve or reconstruct actual+predicted values
         if not hasattr(self, "y_test_real"):
-            (X_scaled, y_scaled), _ = self.preprocess_and_split()
-            preds_scaled = self.model.predict(X_scaled)
+            # Correct unpack: training and test splits
+            (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled) = self.preprocess_and_split()
 
-            y_real = self.scaler_y.inverse_transform(y_scaled).flatten()
+            # Predict on the **test set**, not training set
+            preds_scaled = self.model.predict(X_test_scaled)
+
+            # Convert to real scale
+            y_real = self.scaler_y.inverse_transform(y_test_scaled).flatten()
             preds_real = self.scaler_y.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
+
+            # Cache for later calls
+            self.y_test_real = y_real
+            self.preds_real = preds_real
         else:
             y_real = self.y_test_real
             preds_real = self.preds_real
@@ -271,49 +276,43 @@ class EnergyEstimator:
         ax.plot(x, preds_real, label="Predicted", color="#ff7f0e",
                 linestyle="--", marker="x")
 
-        # --------------------------------------------------------
-        #              HIGHLIGHT THE LATEST PREDICTION
-        # --------------------------------------------------------
-        if self.latest_prediction is not None:
-            lx = layers                    # number of layers
-            ly = self.latest_prediction    # predicted kWh
+        # Highlight prediction for specified layers
+        lx = layers
+        ly = predicted_energy
 
-            # Convert "layers" to correct x-location.
-            # If your x-axis is layers, use lx directly.
-            # If your x-axis is sample index, then:
-            x_pred = lx
+        x_pred = lx
 
-            # Vertical line
-            ax.vlines(
-                x_pred, ymin=0, ymax=ly,
-                colors="cyan", linewidth=2, zorder=5
-            )
+        # Vertical line
+        ax.vlines(
+            x_pred, ymin=0, ymax=ly,
+            colors="cyan", linewidth=2, zorder=5
+        )
 
-            # Horizontal line
-            ax.hlines(
-                ly, xmin=1, xmax=x_pred,
-                colors="cyan", linewidth=2, zorder=5
-            )
+        # Horizontal line
+        ax.hlines(
+            ly, xmin=1, xmax=x_pred,
+            colors="cyan", linewidth=2, zorder=5
+        )
 
-            # Marker (diamond)
-            ax.scatter(
-                x_pred, ly,
-                s=120, marker="D",
-                facecolor="cyan",
-                edgecolor="black",
-                linewidth=1,
-                zorder=5
-            )
+        # Marker (diamond)
+        ax.scatter(
+            x_pred, ly,
+            s=120, marker="D",
+            facecolor="cyan",
+            edgecolor="black",
+            linewidth=1,
+            zorder=5
+        )
 
-            # Text bubble
-            ax.annotate(
-                "Prediction",
-                xy=(x_pred, ly),
-                xytext=(x_pred + 0.8, ly + 0.8),
-                bbox=dict(boxstyle="round,pad=0.4", fc="cyan"),
-                arrowprops=dict(arrowstyle="->"),
-                zorder=11
-            )
+        # Text bubble
+        ax.annotate(
+            "Prediction",
+            xy=(x_pred, ly),
+            xytext=(x_pred + 0.8, ly + 0.8),
+            bbox=dict(boxstyle="round,pad=0.4", fc="cyan"),
+            arrowprops=dict(arrowstyle="->"),
+            zorder=11
+        )
 
         # Axis settings
         ax.set_title(f"Energy Prediction vs Actual ({self.model_type})")
@@ -323,3 +322,4 @@ class EnergyEstimator:
         ax.legend()
 
         return fig
+

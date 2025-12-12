@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable AI - Energy-Efficient Prompt Engineering</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #2E864B;
+            --secondary-blue: #17557F;
+            --accent-teal: #4ECDC4;
+            --dark-navy: #1A1A2E;
+            --light-gray: #F5F5F5;
+            --coral-red: #FF6B6B;
+            --gradient-start: #2E864B;
+            --gradient-end: #17557F;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-navy);
+            background-color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 .emoji {
+            font-size: 2.5rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .hero .course-info {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--dark-navy);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            max-width: 1200px;
+            margin: 0 auto;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background: var(--accent-teal);
+            color: var(--dark-navy);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--dark-navy);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-green), var(--accent-teal));
+            border-radius: 2px;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 20px auto 0;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background: var(--light-gray);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .problem-card h3 {
+            color: var(--secondary-blue);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-card-header {
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .team-card:nth-child(1) .team-card-header { background: var(--primary-green); }
+        .team-card:nth-child(2) .team-card-header { background: var(--secondary-blue); }
+        .team-card:nth-child(3) .team-card-header { background: var(--accent-teal); color: var(--dark-navy); }
+        .team-card:nth-child(4) .team-card-header { background: var(--coral-red); }
+
+        .team-card-header .avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .team-card-header h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .team-card-header .role {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .team-card-body {
+            padding: 25px;
+        }
+
+        .team-card-body ul {
+            list-style: none;
+        }
+
+        .team-card-body li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+        }
+
+        .team-card-body li:last-child {
+            border-bottom: none;
+        }
+
+        .team-card-body li::before {
+            content: '✓';
+            color: var(--primary-green);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary-green);
+        }
+
+        .feature-card h3 {
+            color: var(--dark-navy);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-card h3 i {
+            color: var(--primary-green);
+        }
+
+        .feature-card p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .feature-card .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            background: var(--light-gray);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: var(--secondary-blue);
+            font-weight: 500;
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            background: var(--dark-navy);
+            color: white;
+        }
+
+        .architecture-section .section-header h2 {
+            color: white;
+        }
+
+        .architecture-section .section-header p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .architecture-diagram {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Metrics Section */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .metric-card .value {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-card .label {
+            color: #666;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        /* Tech Stack */
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .tech-item i {
+            font-size: 2rem;
+            color: var(--secondary-blue);
+            margin-bottom: 10px;
+        }
+
+        .tech-item h4 {
+            color: var(--dark-navy);
+            margin-bottom: 5px;
+        }
+
+        .tech-item p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-green);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-teal);
+            color: var(--dark-navy);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-green);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-navy);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        footer a {
+            color: var(--accent-teal);
+            text-decoration: none;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #dcdcdc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1rem;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            .container {
+                padding: 40px 15px;
+            }
+
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1><span class="emoji">🌱</span> Sustainable AI</h1>
+            <p class="subtitle">Transparency and Energy-Efficient Prompt/Context Engineering with Machine Learning</p>
+            <p class="course-info">CSCN8010 - Machine Learning | December 2025</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#metrics">Metrics</a></li>
+            <li><a href="#tech">Tech Stack</a></li>
+            <li><a href="#demo">Demo</a></li>
+        </ul>
+    </nav>
+
+    <!-- Problem Section -->
+    <section id="problem" class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Challenge</h2>
+                <p>AI data centers are among the fastest-growing energy consumers worldwide, demanding innovative solutions for sustainability</p>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="icon">⚡</div>
+                    <h3>Rising Energy Consumption</h3>
+                    <p>AI data centers consume massive amounts of electricity. A single large language model training run can emit as much carbon as five cars over their lifetimes.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">📜</div>
+                    <h3>EU Regulations Coming</h3>
+                    <p>The European Union requires energy usage reporting by August 2026, pushing organizations to measure and optimize their AI energy footprint.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">🏢</div>
+                    <h3>Rapid Expansion</h3>
+                    <p>Over 1,240 new data centers were built in 2025 alone, with AI workloads driving unprecedented demand for computational resources.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon">🔍</div>
+                    <h3>Lack of Transparency</h3>
+                    <p>Users have no visibility into the energy cost of their AI interactions. Our solution provides real-time energy estimates and optimization suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Team</h2>
+                <p>Four specialists combining data engineering, machine learning, NLP, and user experience design</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="avatar">📊</div>
+                        <h3>Jarius Bedward</h3>
+                        <div class="role">Data & Feature Engineering</div>
+                    </div>
+                    <div class="team-card-body">
+                        <ul>
+                            <li>Synthetic dataset generation</li>
+                            <li>Feature extraction pipeline</li>
+                            <li>Data preprocessing & normalization</li>
+                            <li>SQLite data logging system</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="avatar">🤖</div>
+                        <h3>Mostafa Allahmoradi</h3>
+                        <div class="role">Energy Prediction ML</div>
+                    </div>
+                    <div class="team-card-body">
+                        <ul>
+                            <li>Random Forest Regressor</li>
+                            <li>Linear Regression baseline</li>
+                            <li>Isolation Forest anomaly detection</li>
+                            <li>Model persistence & evaluation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="avatar">🧠</div>
+                        <h3>Oluwafemi Lawal</h3>
+                        <div class="role">NLP / Prompt Optimizer</div>
+                    </div>
+                    <div class="team-card-body">
+                        <ul>
+                            <li>T5 model fine-tuning (195 examples)</li>
+                            <li>Semantic similarity validation</li>
+                            <li>Rule-based optimization engine</li>
+                            <li>Sentence-Transformers integration</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-card-header">
+                        <div class="avatar">🖥️</div>
+                        <h3>Jatinder Pal Singh</h3>
+                        <div class="role">GUI / Streamlit Integration</div>
+                    </div>
+                    <div class="team-card-body">
+                        <ul>
+                            <li>Streamlit dashboard design</li>
+                            <li>Interactive visualizations</li>
+                            <li>Real-time metrics display</li>
+                            <li>User experience optimization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" style="background: var(--light-gray);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Key Features</h2>
+                <p>A comprehensive machine learning framework combining supervised and unsupervised learning techniques</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-bolt"></i> Energy Prediction</h3>
+                    <p>Supervised learning models estimate energy consumption (kWh) based on prompt characteristics and model architecture parameters.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Random Forest</span>
+                        <span class="tech-tag">Linear Regression</span>
+                        <span class="tech-tag">scikit-learn</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-magic"></i> Prompt Optimization</h3>
+                    <p>T5 transformer model intelligently rephrases prompts to reduce token count while preserving semantic meaning (20-40% reduction).</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">T5-small</span>
+                        <span class="tech-tag">HuggingFace</span>
+                        <span class="tech-tag">PyTorch</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-check-double"></i> Semantic Validation</h3>
+                    <p>Sentence-Transformers ensure optimized prompts maintain >85% semantic similarity with originals using cosine similarity scoring.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">all-MiniLM-L6-v2</span>
+                        <span class="tech-tag">Embeddings</span>
+                        <span class="tech-tag">Cosine Similarity</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Anomaly Detection</h3>
+                    <p>Isolation Forest algorithm identifies prompts with unusually high resource demands, flagging potential inefficiencies.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Isolation Forest</span>
+                        <span class="tech-tag">Unsupervised Learning</span>
+                        <span class="tech-tag">Outlier Detection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="architecture-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>System Architecture</h2>
+                <p>Modular design connecting data pipeline, ML models, NLP engine, and user interface</p>
+            </div>
+            <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         SUSTAINABLE AI ARCHITECTURE                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
+│   │   STREAMLIT │    │   ENERGY    │    │     NLP     │    │    DATA     │ │
+│   │     GUI     │◄──►│  PREDICTOR  │◄──►│  OPTIMIZER  │◄──►│   LOGGER    │ │
+│   │  (app.py)   │    │(estimator)  │    │ (T5 model)  │    │  (SQLite)   │ │
+│   └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘ │
+│         │                  │                  │                  │         │
+│         ▼                  ▼                  ▼                  ▼         │
+│   ┌─────────────────────────────────────────────────────────────────────┐  │
+│   │                        SHARED DATA LAYER                            │  │
+│   │   • Synthetic Dataset (energy_dataset.csv)                          │  │
+│   │   • Training Data (195 prompt pairs)                                │  │
+│   │   • Trained Models (.pkl files)                                     │  │
+│   │   • Fine-tuned T5 (~230MB)                                          │  │
+│   └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+DATA FLOW:
+━━━━━━━━━━
+User Input ──► Feature Extraction ──► Energy Prediction ──► Results Display
+     │                                        │
+     └──► NLP Optimization ──► Semantic Validation ──► Optimized Prompt
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics Section -->
+    <section id="metrics">
+        <div class="container">
+            <div class="section-header">
+                <h2>Performance Metrics</h2>
+                <p>Quantitative results demonstrating the effectiveness of our optimization approach</p>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="value">20-40%</div>
+                    <div class="label">Average Token Reduction</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">>85%</div>
+                    <div class="label">Semantic Similarity</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">67</div>
+                    <div class="label">Unit Tests Passing</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">326</div>
+                    <div class="label">Lines in Estimator</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">1,148</div>
+                    <div class="label">Lines in Optimizer</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">195</div>
+                    <div class="label">Training Examples</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech" style="background: var(--light-gray);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Technology Stack</h2>
+                <p>Modern Python ecosystem with deep learning and web framework integration</p>
+            </div>
+            <div class="tech-stack-grid">
+                <div class="tech-item">
+                    <i class="fab fa-python"></i>
+                    <h4>Python 3.13</h4>
+                    <p>Core Language</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <h4>Streamlit</h4>
+                    <p>Web Framework</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-brain"></i>
+                    <h4>PyTorch</h4>
+                    <p>Deep Learning</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-robot"></i>
+                    <h4>Transformers</h4>
+                    <p>HuggingFace NLP</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-cogs"></i>
+                    <h4>scikit-learn</h4>
+                    <p>ML Models</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Plotly</h4>
+                    <p>Visualizations</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-table"></i>
+                    <h4>Pandas</h4>
+                    <p>Data Processing</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-database"></i>
+                    <h4>SQLite</h4>
+                    <p>Data Logging</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="cta-section">
+        <div class="container">
+            <h2>🚀 Try It Yourself</h2>
+            <p style="max-width: 600px; margin: 0 auto; opacity: 0.9;">
+                Clone the repository and run the Streamlit application to explore energy-efficient prompt engineering in action.
+            </p>
+            <div class="code-block" style="max-width: 500px; margin: 30px auto; text-align: left;">
+                <code>
+<span class="comment"># Clone and run</span>
+<span class="keyword">git clone</span> <span class="string">[repository-url]</span>
+<span class="keyword">cd</span> Sustainable_AI_G3-
+<span class="keyword">pip install</span> -r requirements.txt
+<span class="keyword">streamlit run</span> src/gui/app.py
+                </code>
+            </div>
+            <div class="cta-buttons">
+                <a href="https://github.com" class="btn btn-primary">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            <strong>🌱 Sustainable AI Project</strong><br>
+            CSCN8010 - Machine Learning | Conestoga College | December 2025
+        </p>
+        <p style="margin-top: 15px; font-size: 0.9rem;">
+            Built with ❤️ by Jarius, Mostafa, Oluwafemi & Jatinder
+        </p>
+    </footer>
+
+</body>
+</html>
