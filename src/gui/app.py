@@ -1,3 +1,7 @@
+#### Developer: Mostafa Allahmoradi
+#### Course: CSCN8010 - Machine Learning
+#### Date: December 2025
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px

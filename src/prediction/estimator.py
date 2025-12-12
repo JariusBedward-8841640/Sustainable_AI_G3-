@@ -1,3 +1,7 @@
+#### Developer: Mostafa Allahmoradi
+#### Course: CSCN8010 - Machine Learning
+#### Date: December 2025
+
 import pandas as pd
 import numpy as np
 
