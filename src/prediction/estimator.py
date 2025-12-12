@@ -243,13 +243,20 @@ class EnergyEstimator:
         if layers is None:
             raise ValueError("Number of layers must be provided for plotting.")
 
-        # Retrieve or reconstruct actual+predicted values
         if not hasattr(self, "y_test_real"):
-            (X_scaled, y_scaled), _ = self.preprocess_and_split()
-            preds_scaled = self.model.predict(X_scaled)
+            # Correct unpack: training and test splits
+            (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled) = self.preprocess_and_split()
 
-            y_real = self.scaler_y.inverse_transform(y_scaled).flatten()
+            # Predict on the **test set**, not training set
+            preds_scaled = self.model.predict(X_test_scaled)
+
+            # Convert to real scale
+            y_real = self.scaler_y.inverse_transform(y_test_scaled).flatten()
             preds_real = self.scaler_y.inverse_transform(preds_scaled.reshape(-1, 1)).flatten()
+
+            # Cache for later calls
+            self.y_test_real = y_real
+            self.preds_real = preds_real
         else:
             y_real = self.y_test_real
             preds_real = self.preds_real
@@ -269,15 +276,10 @@ class EnergyEstimator:
         ax.plot(x, preds_real, label="Predicted", color="#ff7f0e",
                 linestyle="--", marker="x")
 
-        # --------------------------------------------------------
-        #              HIGHLIGHT THE LATEST PREDICTION
-        # --------------------------------------------------------
-        lx = layers              # number of layers
-        ly = predicted_energy    # predicted kWh
+        # Highlight prediction for specified layers
+        lx = layers
+        ly = predicted_energy
 
-        # Convert "layers" to correct x-location.
-        # If your x-axis is layers, use lx directly.
-        # If your x-axis is sample index, then:
         x_pred = lx
 
         # Vertical line
@@ -320,3 +322,4 @@ class EnergyEstimator:
         ax.legend()
 
         return fig
+

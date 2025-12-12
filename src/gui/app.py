@@ -162,6 +162,7 @@ if st.session_state['step'] >= 1:
     # --- SHOW ENERGY PERFORMANCE GRAPH ---
     st.markdown("#### Initial Model Performance")
     with st.expander("📈 View Energy Performance Graph", expanded=True):
+        original_results = st.session_state['original_results']
         fig = estimator.get_training_plot(layers, original_results['energy_kwh'])
         st.pyplot(fig)
 
@@ -171,6 +172,7 @@ if st.session_state['step'] >= 1:
     # PROMPT OPTIMIZATION ANALYSIS SECTION
     # =================================================================
     # Get optimized results
+    res_original = st.session_state['original_results']
     res_optimized = st.session_state.get('optimized_results', {})  
     opt = st.session_state.get('optimization_analysis', {})
 
