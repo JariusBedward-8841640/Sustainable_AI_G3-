@@ -31,6 +31,8 @@ The Sustainable AI system is designed to predict and optimize energy consumption
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+![Architecture diagram](architecture.png)
+
 ## Directory Structure
 
 ```
@@ -157,8 +159,8 @@ Sustainable_AI_G3-/
 
 **Configuration Files:**
 
-| File | Purpose |
-|------|---------|
+| File                                            | Purpose                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------- |
 | `model/prompt_optimizer/word_replacements.json` | Verbose phrases, word simplifications, filler words, redundant phrases |
 
 **Features:**
