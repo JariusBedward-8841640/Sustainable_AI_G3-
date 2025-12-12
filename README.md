@@ -147,8 +147,8 @@ To share the trained model with teammates:
 ### Final Conclusion:
 
     - This project demonstrates a proof-of-concept for "Sustainable AI" by linking NLP inputs directly to physical energy estimates.
-    - The application successfully...
-    - By integrating anomaly detection and prompt optimization...
+    - The application successfully gets the energy usage from a prompt, predicts how much energy it will take and comapre to the actual and then will provide the user with teh option for an optimzied version of the prompt to promote sustainbility.
+        
 
 ### 🤝 Contributing
 
