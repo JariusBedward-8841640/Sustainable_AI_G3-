@@ -131,6 +131,8 @@ class EnergyEstimator:
         X_test_scaled = self.scaler_X.transform(X_test)
         y_test_scaled = self.scaler_y.transform(y_test)
 
+        print(f"Data split into {len(X_train)} training and {len(X_test)} testing samples.")
+
         return (X_train_scaled, y_train_scaled), (X_test_scaled, y_test_scaled)
 
     def train(self):
